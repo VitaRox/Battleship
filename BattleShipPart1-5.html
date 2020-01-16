@@ -20,11 +20,23 @@
 	// where hits and misses have taken place;
     var gameArray=[100];
 	// creates an Object containing (x,y) and {hit, miss, or ship.name};
-	function cell(x,y,contains){
+	function Cell(x,y,contains){
 		x = this.x;
 		y = this.y;
 		contains = this.contain;
 	}
+
+	// Create an Object constructor for the general Ship-type Object;
+	// Ships contain info about their position, name, and when they
+	// will sink;
+	function Ship(size,hitPoints,name){
+		this.size = size;
+		// hitPoints initially equal to the number of spaces the Ship-type
+		// occupies.
+		hitPoints = size;
+		this.name = name;
+	}
+
 	// I'm turning the following variables into Strings,
 	// so that specific ships' location and hits can be tracked;
     // var empty = 0;
@@ -62,12 +74,14 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 		for(i = 0; i < 100; i++) {
 			for(col = 0; col < 10; col++){
 				for(row = 0; row < 10; row++){
-					cell(row,col,"empty");
+					// Create instance of a Cell Object;
+					Cell(row,col,"empty");
 				}
 			}
 
 		}
 	}
+
 
 	// for(col = 0; col < 10; col++){
 	// 	for(row = 0; row < 10; row++) {
@@ -94,10 +108,13 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 	// this is the Model, the 2D array tracking hits and misses
 	// and ship placement;
+	// i.e. places the ships;
     function dispgameArray(){
         // var i = 0; commented out as unnecessary;
         var html = "";
-		// Must make 2D now;
+		// Creates the array tracking ship positions and where hits/misses
+		// have occurred; need additional dimensions covered both in Model and
+		// visually in the View component;
         alert(gameArray.length);
         for (i=0; i < gameArray.length; i++){
             if (gameArray[i] == empty) {
@@ -129,6 +146,8 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
                 {html = html + "*  "}
             }
         }
+		// Create and place instances of Ships;
+		// var carrier = new Ship()
         document.getElementById("part3").innerHTML = html;
     }
 
