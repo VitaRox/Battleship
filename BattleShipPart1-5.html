@@ -19,6 +19,314 @@
 	// A 1D array of Cells to track position of vessels and places
 	// where hits and misses have taken place;
     var gameArray=[100];
+	// creates an Object containing (x,y) and {miss, or ship.name};
+	function Cell(x,y,contains,symbol){
+		x = this.x;
+		y = this.y;
+		contains = this.contains;
+		// "Symbol" is first letter of Ship.name, used to mark where hits
+		// occur;
+		symbol = this.symbol;
+	}
+
+	// Create an Object constructor for the general Ship-type Object;
+	// Ships contain info about their position, name, and when they
+	// will sink;
+	function Ship(size,hitPoints,name){
+		this.size = size;
+		// hitPoints initially equal to the number of spaces the Ship-type
+		// occupies.
+		hitPoints = size;
+		this.name = name;
+	}
+
+	// I'm turning the following variables into Strings,
+	// so that specific ships' location and hits can be tracked;
+    // var empty = 0;
+    // var hit = 1;
+    // var miss = 2;
+    //var ship = 3; this will have to be hitPoints for each vessel;
+    var guess = 0;
+    var countTries = 0;
+    var countMisses = 0;
+    var countHits = 0;
+	
+	// The following instantiates the Ship objects representing each vessel;
+	// The isOdd() function is being repurposed to determine whether the
+	// vessel is to be placed vertically or horizontally;
+	// isOdd(): vertical;
+	// !isOdd(): horizontal;
+	var aircraftCarrier = new Ship(5,isOdd(),"aircraftCarrier","A");
+	var battleship = new Ship(4,isOdd(),"battleship","B");
+	var cruiser = new Ship(3, isOdd(),"cruiser","C");
+	var submarine = new Ship(3, isOdd(),"submarine","S");
+	var destroyer = new Ship(2,isOdd(),"destroyer","D");
+
+	// Set up game initially;
+    initGame(10);
+	initializeGameArray(gameArray);
+    dispgameArray();
+    shipLocator();
+    dispgameArray();
+    dispBoard();
+    //guess1 = getGuess();
+    //updateGameArray(guess1);
+    //dispgameArray();
+
+
+
+
+//document.getElementById("part1").innerHTML = "XX XX XX XX XX XX XX XX XX XX<br>";
+document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>";
+
+	// A function to initialize each of the Model's elements to a string,
+	// called "empty";
+	// Takes an array as an arg;
+	// As ships are added, "empty" will be changed to Ship.name
+	// in order to track which vessel is where;
+	function initializeGameArray(gameArray[]){
+		for(i = 0; i < 100; i++) {
+			for(col = 0; col < 10; col++){
+				for(row = 0; row < 10; row++){
+					// Create instance of a Cell Object;
+					Cell(row,col,"empty");
+				}
+			}
+
+		}
+	}
+
+
+	// for(col = 0; col < 10; col++){
+	// 	for(row = 0; row < 10; row++) {
+	// 		gameArray[row][col] = "empty";
+	// 	}
+	// }
+
+    // function initGame(n){
+    //     alert("initGame");
+    //     var i=0;
+    //     for (i=0; i<n; i++){
+    //         gameArray[i] = empty;
+    //     }
+    // }
+
+	// Can use to determine whether a Ship is vertical or horizontally placed;
+    function isOdd(num) {
+		if (num%2 === 0){
+			return true
+        } else {
+            return false
+        }
+	}
+
+	// this is the Model, the array tracking hits and misses
+	// and ship placement;
+	// i.e. places the ships;
+    function dispgameArray(){
+        // var i = 0; commented out as unnecessary;
+        var html = "";
+		// Creates the array tracking ship positions and where hits/misses
+		// have occurred; need additional dimensions covered both in Model and
+		// visually in the View component;
+        alert(gameArray.length);
+		//for(const Cell of gameArray){}
+        for (i=0; i < gameArray.length; i++){
+            if (gameArray[i] == empty) {
+                if (isOdd(i)){
+                    html = html + "X"
+                }
+                else
+                {html = html + "X "}
+            }
+            if (gameArray[i] == ship){
+                if (isOdd(i)){
+                    html = html + "&"
+                }
+                else
+                {html = html + "&  "}
+            }
+            if (gameArray[i] == miss){
+                if (isOdd(i)){
+                    html = html + "M"
+                }
+                else
+                {html = html + "M  "}
+            }
+            if (gameArray[i] == hit){
+                if (isOdd(i)){
+                    html = html + "*"
+                }
+                else
+                {html = html + "*  "}
+            }
+        }
+		// Create and place instances of Ships;
+		// var carrier = new Ship()
+        document.getElementById("part3").innerHTML = html;
+    }
+
+	// hack this to make useful for different ships;
+	// this appears to place the ships within the board;
+	// move to inside Ship constructor;
+    function shipLocator(){
+        var location = 0;
+        alert(location);
+        location = Math.floor(Math.random()*18);
+        alert("shipLocator() -" + location);
+        gameArray[location] = ship;
+        gameArray[location+1] = ship;
+        gameArray[location+2] = ship;
+    }
+
+    // get user's X-coordinate guess;
+    function getGuessX(){
+        alert("getGuessX");
+        var guessIsBad = true;
+        while (guessIsBad) {
+            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
+            alert(guessX)
+            alert(parseInt(guessX));
+            if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)){alert("in 	If -" + guessIsBad);
+                        return parseInt(guessX)};
+            alert(guessIsBad);
+        }
+        return parseInt(guessX);
+    }
+
+	// get user's Y-coordinate guess;
+	function getGuessY(){
+         alert("getGuessY");
+         var guessIsBad = true;
+         while (guessIsBad) {
+             var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
+             alert(guessY)
+             alert(parseInt(guessY));
+             if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)){alert("in 	If -" + guessIsBad);
+                         return parseInt(guessY)};
+             alert(guessIsBad);
+         }
+         return parseInt(guessY);
+     }
+
+	// updates both the Model and the View;
+	// make able to handle 2D array;
+    function updateGameArray(guessX, guessY){
+        alert("updateGameArray - " + guessX);
+		alert("updateGameArray - " + guessY;
+        //alert("updateGameArray - " + gameArray[guess2]);
+		// Add handling for multiple ship types, differentiating
+		// between them;
+        if (gameArray[guessX].equals("empty")){
+			gameArray[guess2] = miss;
+			countMisses++;
+			countTries++;
+		}else if (gameArray[guess2] == ship){
+    		gameArray[guess2] = hit;
+			countHits++;
+		}else if (gameArray[guess2] == miss) {
+			gameArray[guess2] = miss;
+			countTries++;
+		}else if (gameArray[guess2] == hit) {
+			gameArray[guess2] = hit;
+			countTries++;
+		}
+    }
+
+
+    function getUpdateDisplay(){
+        var guessX = 0;
+        guessX = getGuessX();
+		var guessY = 0;
+		guessY = getGuessY();
+	    //alert("after getGuess -" + guess1);
+	    updateGameArray(guessX, guessY);
+	    dispgameArray();
+	    dispBoard();
+    }
+
+	// the pretty pictures (View)
+    function dispBoard(){
+        var i = 0;
+        var html = "";
+       // alert("disp Board");
+        for (i = 0; i < 10; i++){
+            //alert("gameArray -" + gameArray[i] + "i - " + i);
+            if (gameArray[i] == empty) {
+                if (isOdd(i)){
+                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
+                }
+                else
+                {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
+            }
+            if (gameArray[i] == ship){
+                if (isOdd(i)){
+                    html = html + "<img src='water.png' alt='1' height='25' width='25'>"
+                }
+                else
+                {html = html + "<img src='water.png' alt='1' height='25' width='25'>  "}
+            }
+            if (gameArray[i] == miss){
+                if (isOdd(i)){
+                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
+                }
+                else
+                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
+            }
+            if (gameArray[i] == hit){
+                if (isOdd(i)){
+                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
+                }
+                else
+                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+            }
+        }
+        alert(html);
+        document.getElementById("part1").innerHTML = html;
+        document.getElementById("part5").innerHTML = "Tries - " + countTries + " Misses - " + countMisses + " Hits = " + countHits;
+        if (countTries > 8) { document.getElementById("part6").innerHTML ="The ship ESCAPED!"}
+        if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
+    }
+
+
+
+</script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="/__/firebase/7.6.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="/__/firebase/7.6.1/firebase-analytics.js"></script>
+
+<!-- Initialize Firebase -->
+<script src="/__/firebase/init.js"></script>
+
+
+</body>
+</html>
+=======
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+<body>
+
+<h1>Battleship Game</h1>
+<p id="part1">Part 1</p>
+    <p id="part2"></p>
+    <p id="part3"></p>
+    <p id="part4"><button type=button onclick=getUpdateDisplay()>GUESS</button></p>
+    <p id="part5">Status</p>
+    <p id="part6"></p>
+    <p id="part7"></p>
+
+<script>
+
+	// A 1D array of Cells to track position of vessels and places
+	// where hits and misses have taken place;
+    var gameArray=[100];
 	// creates an Object containing (x,y) and {hit, miss, or ship.name};
 	function Cell(x,y,contains){
 		x = this.x;
