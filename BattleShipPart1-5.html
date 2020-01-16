@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+<body>
+
+<h1>Battleship Game</h1>
+<p id="part1">Part 1</p>
+    <p id="part2"></p>
+    <p id="part3"></p>
+    <p id="part4"><button type=button onclick=getUpdateDisplay()>GUESS</button></p>
+    <p id="part5">Status</p>
+    <p id="part6"></p>
+    <p id="part7"></p>
+
+<script>
+
+    var gameArray=[];
+    var empty = 0;
+    var hit = 1;
+    var miss = 2;
+    var ship = 3;
+    var guess1 = 0;
+    var countTries = 0;
+    var countMisses = 0;
+    var countHits = 0;
+
+    initGame(10);
+    dispgameArray();
+    shipLocator();
+    dispgameArray();
+    dispBoard();
+    //guess1 = getGuess();
+    //updateGameArray(guess1);
+    //dispgameArray();
+
+
+
+
+//document.getElementById("part1").innerHTML = "XX XX XX XX XX XX XX XX XX XX<br>";
+document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>";
+
+    function initGame(n){
+        alert("initGame");
+        var i=0;
+        for (i=0; i<n; i++){
+            gameArray[i] = empty;
+        }
+    }
+
+	// Can use to determine whether a Ship is vertical or horizontally placed;
+    function isOdd(num) {
+		if (num%2 === 0){
+			return true
+        } else {
+            return false
+        }
+	}
+
+    function dispgameArray(){
+        // var i = 0; commented out as unnecessary;
+        var html = "";
+        alert(gameArray.length);
+        for (i=0; i < gameArray.length; i++){
+            if (gameArray[i] == empty) {
+                if (isOdd(i)){
+                    html = html + "X"
+                }
+                else
+                {html = html + "X "}
+            }
+            if (gameArray[i] == ship){
+                if (isOdd(i)){
+                    html = html + "&"
+                }
+                else
+                {html = html + "&  "}
+            }
+            if (gameArray[i] == miss){
+                if (isOdd(i)){
+                    html = html + "M"
+                }
+                else
+                {html = html + "M  "}
+            }
+            if (gameArray[i] == hit){
+                if (isOdd(i)){
+                    html = html + "*"
+                }
+                else
+                {html = html + "*  "}
+            }
+        }
+        document.getElementById("part3").innerHTML = html;
+    }
+
+	// hack this to make useful for different ships;
+	// this appears to place the ships;
+	// move to inside Ship constructor;
+    function shipLocator(){
+        var location = 0;
+        alert(location);
+        location = Math.floor(Math.random()*18);
+        alert("shipLocator() -" + location);
+        gameArray[location] = ship;
+        gameArray[location+1] = ship;
+        gameArray[location+2] = ship;
+    }
+
+    // get user's X-coordinate guess;
+    function getGuessX(){
+        alert("getGuessX");
+        var guessIsBad = true;
+        while (guessIsBad) {
+            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
+            alert(guessX0)
+            alert(parseInt(guessX));
+            if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)){alert("in 	If -" + guessIsBad);
+                        return parseInt(guessX)};
+            alert(guessIsBad);
+        }
+        return parseInt(guessX);
+    }
+
+	// get user's Y-coordinate guess;
+	function getGuessY(){
+         alert("getGuessY");
+         var guessIsBad = true;
+         while (guessIsBad) {
+             var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
+             alert(guessY)
+             alert(parseInt(guessY));
+             if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)){alert("in 	If -" + guessIsBad);
+                         return parseInt(guessY)};
+             alert(guessIsBad);
+         }
+         return parseInt(guessY);
+     }
+
+
+    function updateGameArray(guess2){
+        alert("updateGameArray - " + guess2);
+        //alert("updateGameArray - " + gameArray[guess2]);
+
+        if (gameArray[guess2] == empty){
+			gameArray[guess2] = miss;
+			countMisses++;
+			countTries++;
+		}else if (gameArray[guess2] == ship){
+    		gameArray[guess2] = hit;
+			countHits++;
+		}else if (gameArray[guess2] == miss) {
+			gameArray[guess2] = miss;
+			countTries++;
+		}else if (gameArray[guess2] == hit) {
+			gameArray[guess2] = hit;
+			countTries++;
+		}
+    }
+
+
+    function getUpdateDisplay(){
+        var guess1 = 0;
+        guess1 = getGuess();
+
+    //alert("after getGuess -" + guess1);
+    updateGameArray(guess1);
+    dispgameArray();
+    dispBoard();
+    }
+
+    function dispBoard(){
+        var i = 0;
+        var html = "";
+       // alert("disp Board");
+        for (i=0; i < gameArray.length; i++){
+            //alert("gameArray -" + gameArray[i] + "i - " + i);
+            if (gameArray[i] == empty) {
+                if (isOdd(i)){
+                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
+                }
+                else
+                {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
+            }
+            if (gameArray[i] == ship){
+                if (isOdd(i)){
+                    html = html + "<img src='water.png' alt='1' height='25' width='25'>"
+                }
+                else
+                {html = html + "<img src='water.png' alt='1' height='25' width='25'>  "}
+            }
+            if (gameArray[i] == miss){
+                if (isOdd(i)){
+                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
+                }
+                else
+                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
+            }
+            if (gameArray[i] == hit){
+                if (isOdd(i)){
+                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
+                }
+                else
+                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+            }
+        }
+        alert(html);
+        document.getElementById("part1").innerHTML = html;
+        document.getElementById("part5").innerHTML = "Tries - " + countTries + " Misses - " + countMisses + " Hits = " + countHits;
+        if (countTries > 8) { document.getElementById("part6").innerHTML ="The ship ESCAPED!"}
+        if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
+    }
+
+
+
+</script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="/__/firebase/7.6.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="/__/firebase/7.6.1/firebase-analytics.js"></script>
+
+<!-- Initialize Firebase -->
+<script src="/__/firebase/init.js"></script>
+
+
+</body>
+</html>
