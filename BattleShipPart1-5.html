@@ -20,6 +20,8 @@
 	// where hits and misses have taken place;
     var gameArray=[100];
 
+	// Our counters/accumulators:
+
 	// I'm turning the following variables into Strings,
 	// so that specific ships' location and hits can be tracked;
     // var empty = 0;
@@ -35,7 +37,6 @@
 
 	// generates a random number between 1 and 20;
 	function genRandNum() {
-
 		let randNum = Math.ceil(Math.random() * 20);
 		return randNum;
 	}
@@ -49,7 +50,7 @@
         }
 	}
 
-	// generates a random number between 1 and 4;
+	// generates a random number between 1 and 20;
 	// if number isOdd(), isVertical == true;
 	function determineVertical() {
 		return isOdd(genRandNum());
@@ -57,53 +58,57 @@
 
 	// creates an Object containing location (x,y), and symbol
 	// {miss, or ship.name} to show where hits/misses have occurred;
-	function Cell(x, y, contains, symbol, index){
+	function Cell(x, y, contains, index){
 
 		// x = col, y = row;
 		x = this.x;
 		y = this.y;
+		// Use to store index of position in 1D array as generated and placed;
+		index = -1;
 
 		// Contains is the Ship Object contained in said Cell;
 		// -or-
 		// "Contains" is the name of the Ship contained therein, ship_name.name;
 		contains = this.contains;
 
-		// "Symbol" is first letter of Ship.name, used to mark where hits
-		// occur;
-		symbol = this.symbol;
+		// // "Symbol" is first letter of Ship.name, used to mark where hits
+		// // occur;
+		// symbol = this.symbol;
+		// Above is unnecessary ^^^^^ because in Ship object;
 
 		// beenGuessed a boolean to track whether this Cell has been selected // before;
 		// used for short-circuit eval to check for bad input;
 		let beenGuessed = false;
-
-		// Use to store index of position in 1D array as generated and placed;
-		let index = -1;
 	}
 
 	// Create an Object constructor for the general Ship-type Object;
 	// Ships contain info about their size (# of spaces they occupy),
 	// name, a symbol to show where a hit has occurred, and when they
 	// will sink (when hitPoints == 0);
-	function Ship(size, name, symbol){
+	function Ship(size, name, symbol) {
 
 		// Size is number of spaces Ship occupies;
 		this.size = size;
 		// Name is a string of the type of vessel;
 		this.name = name;
 		// Symbol is an abbreviation for the vessel's name;
-		// to be used for showing where hits have taken place. 
+		// To be used for showing where hits have taken place.
 		this.symbol = symbol;
 
 		// hitPoints initially equal to the number of spaces the Ship-type
 		// occupies.
 		var hitPoints = size;
-
-		// If isOdd() returns true, isVertical == true;
-		var isVertical = isOdd();
-
 		if(hitPoints == 0){
 			shipsSunk++;
 		}
+
+		// If isOdd() returns true, isVertical == true;
+		var isVertical = determineVertical();
+
+		// Code to place vessel in gameArray;
+		// Might need to be externally placed;
+		shipLocator(this);
+
 
 	}
 
@@ -112,6 +117,8 @@
 	// vessel is to be placed vertically or horizontally;
 	// isOdd(): vertical;
 	// !isOdd(): horizontal;
+
+	// Instantiate Ship objects;
 	var aircraftCarrier = new Ship(5, "aircraftCarrier", "A");
 	var battleship = new Ship(4, "battleship", "B");
 	var cruiser = new Ship(3, "cruiser", "C");
@@ -124,7 +131,7 @@
     dispgameArray();
 
 	// shipLocator should be called within each Ship as it's instantiated;
-    shipLocator();
+    // shipLocator();
     dispgameArray();
     dispBoard();
     //guess1 = getGuess();
@@ -141,7 +148,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	// called "empty" or a null reference if using Object approach;
 	// Takes an array as an arg;
 	// As ships are added, "empty" will be changed to Ship.name
-	// in order to track which vessel is where, or to a refence to
+	// in order to track which vessel is where, or to a reference to
 	// the appropriate Ship object;
 	function initializeGameArray(gameArray[]){
 		for(i = 0; i < 100; i++) {
@@ -161,7 +168,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 					// alternate approach: store null
 					// references to indicate empty;
-					gameArray[i] = Cell(row, col, null);
+					gameArray[i] = Cell(row, col, null, " ", i);
 				}
 			}
 
@@ -176,10 +183,90 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     //     }
     // }
 
+	// A function to convert gameArray index to corresponding
+	// (col, row) value;
+	// Use for placing Ships;
+	// Test:
+	function convertIndexToCoords(index) {
+		// Initialize (col, row) to dummy values;
+		let col = -1;
+		let row = -1;
+
+		// Check whether a one-digit number or two;
+		if(index < 10) {
+			col = index;
+			row = 0;
+			// else: if index > 9;
+		} else {
+			// Convert index to a string;
+			let tempDex = index.toString();
+			// Break said string into 2 components and convert to
+			// base-10 Numbers;
+			col = parseInt(tempDex.substring(1), 10);
+			row = parseInt(tempDex.substring(0), 10);
+		}
+
+		// This Cell instance used to return two values, col and row;
+		var sampleCell = new Cell(col, row, null, index);
+
+		// Can use to obtain sampleCell.col and sampleCell.row,
+		// our col and row values derived from input index;
+		return sampleCell;
+	}
+
+	// Function to convert (col, row) to index for searching for Ships
+	// and checking user input;
+	// Tested and working;
+	function convertCoordsToIndex(col, row) {
+		let strDex = col.toString().concat(row.toString());
+		let index = parseInt(strDex, 10);
+		return index;
+	}
+
+	// A function to determine if Ship can be placed at the corresponding
+	// Cell in gameArray;
+	// Pass in the Ship it is checking for to place;
+	function hasSpace(ship) {
+		let result = false;
+		// Generate a random (x,y) coordinate;
+		let col = Math.floor(Math.random()*9);
+		let row = Math.floor(Math.random()*9);
+
+		// If Ship is vertical:
+		if(ship.isVertical) {
+			// Increment the row to place Ship lengthwise;
+			for(i = row; i < ship.size; i++) {
+				let index = convertCoordsToIndex(col, row);
+				// If: not off the board, and...
+				if(index < 100) {
+					// ...if the space is unoccupied:
+					if(gameArray[index].contains = null) {
+					// place the ship
+					gameArray[index].contains = ship;
+					}
+				} else {
+					// No room; try again somewhere else;
+					return result;
+				}
+			}
+		// If Ship is horizontal:
+		} else {
+			// Increment the col to place Ship sideways;
+			for(i = col; i < ship.size; i++) {
+				// If: not off the board, and...
+				let index = convertCoordsToIndex(col, row);
+				if(index < 100) {
+					if(gameArray[index].contains = null) {
+						// Place the Ship;
+						gameArray[index].contains = ship;
+					}
+				}
+			}
+		}
+	}
 
 	// this is the Model, the array tracking hits and misses
-	// and ship placement;
-	// i.e. places the ships;
+	// and ship placement i.e. places the ships;
     function dispgameArray(){
 
         // var i = 0; commented out as unnecessary;
@@ -188,7 +275,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 		// Creates the array tracking ship positions and where hits/misses
 		// have occurred; need additional dimensions covered both in Model and
 		// visually in the View component;
-        alert(gameArray.length);
+        alert(gameArray.length + " spaces in gameArray.");
 		// alternatively: for(const Cell of gameArray){}
         for (i=0; i < gameArray.length; i++){
             if (gameArray[i] == empty) {
@@ -225,14 +312,19 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         document.getElementById("part3").innerHTML = html;
     }
 
+
 	// hack this to make useful for different ships;
 	// this appears to place the ships within the board;
 	// move to inside Ship constructor;
-    function shipLocator(){
+	// Takes a Ship object as arg;
+    function shipLocator(ship) {
         var location = 0;
         alert(location);
-        location = Math.floor(Math.random()*18);
+		// Range altered to reflect larger gameArray;
+        location = Math.floor(Math.random()*99);
         alert("shipLocator() -" + location);
+
+
 
         gameArray[location] = ship;
         gameArray[location+1] = ship;
