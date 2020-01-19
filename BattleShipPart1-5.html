@@ -19,53 +19,111 @@
 	// A 1D array of Cells to track position of vessels and places
 	// where hits and misses have taken place;
     var gameArray=[100];
-	// creates an Object containing (x,y) and {miss, or ship.name};
-	function Cell(x,y,contains,symbol){
-		x = this.x;
-		y = this.y;
-		contains = this.contains;
-		// "Symbol" is first letter of Ship.name, used to mark where hits
-		// occur;
-		symbol = this.symbol;
-	}
-
-	// Create an Object constructor for the general Ship-type Object;
-	// Ships contain info about their position, name, and when they
-	// will sink;
-	function Ship(size,hitPoints,name){
-		this.size = size;
-		// hitPoints initially equal to the number of spaces the Ship-type
-		// occupies.
-		hitPoints = size;
-		this.name = name;
-	}
 
 	// I'm turning the following variables into Strings,
 	// so that specific ships' location and hits can be tracked;
     // var empty = 0;
     // var hit = 1;
     // var miss = 2;
-    //var ship = 3; this will have to be hitPoints for each vessel;
+    // var ship = 3; this will have to be hitPoints for each vessel;
     var guess = 0;
     var countTries = 0;
     var countMisses = 0;
     var countHits = 0;
-	
+	var shipsSunk = 0;
+
+
+	// generates a random number between 1 and 20;
+	function genRandNum() {
+
+		let randNum = Math.ceil(Math.random() * 20);
+		return randNum;
+	}
+
+	// Can use to determine whether a Ship is vertical or horizontally placed;
+    function isOdd(num) {
+		if (num % 2 === 0){
+			return true
+        } else {
+            return false
+        }
+	}
+
+	// generates a random number between 1 and 4;
+	// if number isOdd(), isVertical == true;
+	function determineVertical() {
+		return isOdd(genRandNum());
+	}
+
+	// creates an Object containing location (x,y), and symbol
+	// {miss, or ship.name} to show where hits/misses have occurred;
+	function Cell(x, y, contains, symbol, index){
+
+		// x = col, y = row;
+		x = this.x;
+		y = this.y;
+
+		// Contains is the Ship Object contained in said Cell;
+		// -or-
+		// "Contains" is the name of the Ship contained therein, ship_name.name;
+		contains = this.contains;
+
+		// "Symbol" is first letter of Ship.name, used to mark where hits
+		// occur;
+		symbol = this.symbol;
+
+		// beenGuessed a boolean to track whether this Cell has been selected // before;
+		// used for short-circuit eval to check for bad input;
+		let beenGuessed = false;
+
+		// Use to store index of position in 1D array as generated and placed;
+		let index = -1;
+	}
+
+	// Create an Object constructor for the general Ship-type Object;
+	// Ships contain info about their size (# of spaces they occupy),
+	// name, a symbol to show where a hit has occurred, and when they
+	// will sink (when hitPoints == 0);
+	function Ship(size, name, symbol){
+
+		// Size is number of spaces Ship occupies;
+		this.size = size;
+		// Name is a string of the type of vessel;
+		this.name = name;
+		// Symbol is an abbreviation for the vessel's name;
+		// to be used for showing where hits have taken place. 
+		this.symbol = symbol;
+
+		// hitPoints initially equal to the number of spaces the Ship-type
+		// occupies.
+		var hitPoints = size;
+
+		// If isOdd() returns true, isVertical == true;
+		var isVertical = isOdd();
+
+		if(hitPoints == 0){
+			shipsSunk++;
+		}
+
+	}
+
 	// The following instantiates the Ship objects representing each vessel;
 	// The isOdd() function is being repurposed to determine whether the
 	// vessel is to be placed vertically or horizontally;
 	// isOdd(): vertical;
 	// !isOdd(): horizontal;
-	var aircraftCarrier = new Ship(5,isOdd(),"aircraftCarrier","A");
-	var battleship = new Ship(4,isOdd(),"battleship","B");
-	var cruiser = new Ship(3, isOdd(),"cruiser","C");
-	var submarine = new Ship(3, isOdd(),"submarine","S");
-	var destroyer = new Ship(2,isOdd(),"destroyer","D");
+	var aircraftCarrier = new Ship(5, "aircraftCarrier", "A");
+	var battleship = new Ship(4, "battleship", "B");
+	var cruiser = new Ship(3, "cruiser", "C");
+	var submarine = new Ship(3, "submarine", "S");
+	var destroyer = new Ship(2, "destroyer", "D");
 
 	// Set up game initially;
-    initGame(10);
+    // initGame(10);
 	initializeGameArray(gameArray);
     dispgameArray();
+
+	// shipLocator should be called within each Ship as it's instantiated;
     shipLocator();
     dispgameArray();
     dispBoard();
@@ -80,28 +138,35 @@
 document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>";
 
 	// A function to initialize each of the Model's elements to a string,
-	// called "empty";
+	// called "empty" or a null reference if using Object approach;
 	// Takes an array as an arg;
 	// As ships are added, "empty" will be changed to Ship.name
-	// in order to track which vessel is where;
+	// in order to track which vessel is where, or to a refence to
+	// the appropriate Ship object;
 	function initializeGameArray(gameArray[]){
 		for(i = 0; i < 100; i++) {
 			for(col = 0; col < 10; col++){
 				for(row = 0; row < 10; row++){
+
 					// Create instance of a Cell Object;
-					Cell(row,col,"empty");
+					// row = x, col = y;
+
+					// string approach:
+					// gameArray[i] = Cell(row, col, "empty");
+					// for(col = 0; col < 10; col++){
+					// 	for(row = 0; row < 10; row++) {
+					// 		gameArray[row][col] = "empty";
+					// 	}
+					// }
+
+					// alternate approach: store null
+					// references to indicate empty;
+					gameArray[i] = Cell(row, col, null);
 				}
 			}
 
 		}
 	}
-
-
-	// for(col = 0; col < 10; col++){
-	// 	for(row = 0; row < 10; row++) {
-	// 		gameArray[row][col] = "empty";
-	// 	}
-	// }
 
     // function initGame(n){
     //     alert("initGame");
@@ -111,26 +176,20 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     //     }
     // }
 
-	// Can use to determine whether a Ship is vertical or horizontally placed;
-    function isOdd(num) {
-		if (num%2 === 0){
-			return true
-        } else {
-            return false
-        }
-	}
 
 	// this is the Model, the array tracking hits and misses
 	// and ship placement;
 	// i.e. places the ships;
     function dispgameArray(){
+
         // var i = 0; commented out as unnecessary;
         var html = "";
+
 		// Creates the array tracking ship positions and where hits/misses
 		// have occurred; need additional dimensions covered both in Model and
 		// visually in the View component;
         alert(gameArray.length);
-		//for(const Cell of gameArray){}
+		// alternatively: for(const Cell of gameArray){}
         for (i=0; i < gameArray.length; i++){
             if (gameArray[i] == empty) {
                 if (isOdd(i)){
@@ -174,6 +233,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         alert(location);
         location = Math.floor(Math.random()*18);
         alert("shipLocator() -" + location);
+
         gameArray[location] = ship;
         gameArray[location+1] = ship;
         gameArray[location+2] = ship;
@@ -203,14 +263,14 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
              alert(guessY)
              alert(parseInt(guessY));
              if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)){alert("in 	If -" + guessIsBad);
-                         return parseInt(guessY)};
+                return parseInt(guessY)};
              alert(guessIsBad);
          }
          return parseInt(guessY);
      }
 
-	// updates both the Model and the View;
-	// make able to handle 2D array;
+	// update both the Model and the View;
+	// make able to handle 2 args;
     function updateGameArray(guessX, guessY){
         alert("updateGameArray - " + guessX);
 		alert("updateGameArray - " + guessY;
@@ -235,9 +295,9 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 
     function getUpdateDisplay(){
-        var guessX = 0;
+        var guessX = -1;
         guessX = getGuessX();
-		var guessY = 0;
+		var guessY = -1;
 		guessY = getGuessY();
 	    //alert("after getGuess -" + guess1);
 	    updateGameArray(guessX, guessY);
@@ -245,7 +305,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	    dispBoard();
     }
 
-	// the pretty pictures (View)
+	// the pretty pictures (updates the View);
     function dispBoard(){
         var i = 0;
         var html = "";
