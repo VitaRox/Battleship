@@ -107,7 +107,7 @@
 
 		// Code to place vessel in gameArray;
     // Place inside initializeGameArray function;
-		shipLocator(this);
+		//shipLocator(this);
 
 
 	}
@@ -199,7 +199,8 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 			// else: if index > 9;
 		} else {
 			// Convert index to a string;
-			let tempDex = index.toString();
+      // Had to change 'let' to 'var' to allow access outside of else{};
+			var tempDex = index.toString();
 			// Break said string into 2 components and convert to
 			// base-10 Numbers;
 			col = parseInt(tempDex.substring(1), 10);
