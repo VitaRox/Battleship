@@ -102,7 +102,9 @@
 		// hitPoints initially equal to the number of spaces the Ship-type
 		// occupies.
 		var hitPoints = size;
-		if(hitPoints == 0){
+
+    // hitPoints tracks which individual vessels have been sunk;
+		if(hitPoints == 0) {
 			shipsSunk++;
 		}
 
@@ -126,6 +128,7 @@
 	var cruiser = new Ship(3, "cruiser", "C");
 	var submarine = new Ship(3, "submarine", "S");
 	var destroyer = new Ship(2, "destroyer", "D");
+  var miss = new Ship(0, "miss", "M");
 
 	// Set up game initially;
   // initGame(10);
@@ -224,57 +227,57 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	// Pass in the Ship it is checking for to place;
   // This function also places the ships within the gameArray;
 	function hasSpace(ship) {
-		let result = false;
   		// Generate a random (x,y) coordinate;
   		let col = Math.floor(Math.random()*9);
   		let row = Math.floor(Math.random()*9);
 
-      while(result) {
-    		// If Ship is vertical:
-    		if(ship.isVertical) {
-    			// Increment the row to place Ship lengthwise;
-    			for(i = row; i < ship.size; i++) {
-    				let index = convertCoordsToIndex(col, row);
-    				// If: not off the board, and...
-    				if(index < 100) {
-    					// ...if the space is unoccupied:
-    					if(gameArray[index].contains = null) {
-      					// place the ship
-      					gameArray[index].contains = ship;
-    					}
-    				} else {
-              // Reset any indices of gameArray to null to restart process;
-              for(i = row; i < ship.size; i++) {
-                gameArray[i].contains = null;
-      					// No room; try again somewhere else;
-                // Recursive case:
-                hasSpace(ship);
-              }
-    				}
-    			}
-    		// If Ship is horizontal:
-    		} else {
-    			// Increment the col to place Ship sideways;
-    			for(i = col; i < ship.size; i++) {
-    				// If: not off the board, and...
-    				let index = convertCoordsToIndex(col, row);
-    				if(index < 100) {
-              // ....if that space is available...
-    					if(gameArray[index].contains = null) {
-    						// ...place the Ship;
-    						gameArray[index].contains = ship;
-    					}
-    				} else {
-              result = false;
-              return result;
+  		// If Ship is vertical:
+  		if(ship.isVertical) {
+  			// Increment the row to place Ship lengthwise;
+  			for(i = row; i < ship.size; i++) {
+  				let index = convertCoordsToIndex(col, row);
+  				// If: not off the board, and...
+  				if(index < 100) {
+  					// ...if the space is unoccupied:
+  					if(gameArray[index].contains = null) {
+    					// place the ship
+    					gameArray[index].contains = ship;
+  					}
+  				} else {
+            // Reset any indices of gameArray to null to restart process;
+            for(i = row; i < ship.size; i++) {
+              gameArray[i].contains = null;
+    					// No room; try again somewhere else;
+              // Recursive case:
+              hasSpace(ship);
+              // Return to end this call in the callstack;
+              return;
             }
-    			}
-    	 }
-     // Base case: exit while loop, no recursive call;
-     // Set result = true so while loop exited;
-     alert("Result ", result);
-     return result;
-   }
+  				}
+  		  }
+  		// If Ship is horizontal:
+  		} else {
+  			// Increment the col to place Ship sideways;
+  			for(i = col; i < ship.size; i++) {
+  				// If: not off the board, and...
+  				let index = convertCoordsToIndex(col, row);
+  				if(index < 100) {
+            // ....if that space is available...
+  					if(gameArray[index].contains = null) {
+  						// ...place the Ship;
+  						gameArray[index].contains = ship;
+  					}
+          // Recursive case:
+  				} else {
+            hasSpace(ship);
+            // Return to end this call in the callstack;
+            return;
+          }
+  			}
+  	 }
+     // Base case: exit function, having placed the ship in question;
+     return;
+  }
 
 	// this is the Model, the array tracking hits and misses
 	// and ship placement i.e. places the ships;
@@ -283,43 +286,80 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         // var i = 0; commented out as unnecessary;
         var html = "";
 
-		// Creates the array tracking ship positions and where hits/misses
-		// have occurred; need additional dimensions covered both in Model and
-		// visually in the View component;
-        alert(gameArray.length + " spaces in gameArray.");
-		// alternatively: for(const Cell of gameArray){}
-        for (i=0; i < gameArray.length; i++){
-            if (gameArray[i] == empty) {
-                if (isOdd(i)){
-                    html = html + "X"
+        // Place our ships in the game grid;
+        hasSpace(aircraftCarrier);
+        hasSpace(battleship);
+        hasSpace(cruiser);
+        hasSpace(submarine);
+        hasSpace(destroyer);
+
+	    	// Creates the array tracking ship positions and where hits/misses
+		   // have occurred; need additional dimensions covered both in Model and
+		   // visually in the View component;
+       // Include handling for each type of vessel;
+       // Tells how many Cells in gameArray have not been guessed at yet;
+        alert((gameArray.length - guesses) + " unchecked spaces remaining in gameArray.");
+
+       // This controls the display of the game;
+		   // alternatively: for(const Cell of gameArray){}
+        for (col=0; col < 10; col++) {
+          for(row = 0; row < 10; row++) {
+            // Internally convert coords to index here:
+            let index = convertCoordsToIndex(col, row);
+
+            // Display empty Cells;
+            if (gameArray[index].contains == null) {
+                if (isOdd(index)){
+                    html = html + "X";
+                } else {
+                  html = html + "X ";
                 }
-                else
-                {html = html + "X "}
             }
-            if (gameArray[i] == ship){
-                if (isOdd(i)){
-                    html = html + "&"
+            // Check if contains empty when fired upon;
+            if (gameArray[index].contains == miss){
+                if (isOdd(index)) {
+                    html = html + miss.symbol;
+                } else {
+                  html = html + miss.symbol + "  ";
                 }
-                else
-                {html = html + "&  "}
             }
-            if (gameArray[i] == miss){
-                if (isOdd(i)){
-                    html = html + "M"
+            if (gameArray[gameArray[index].contains == aircraftCarrier) {
+                if (isOdd(index)) {
+                    html = html + aircraftCarrier.symbol;
+                } else {
+                  html = html + aircraftCarrier.symbol + "  ";
                 }
-                else
-                {html = html + "M  "}
             }
-            if (gameArray[i] == hit){
-                if (isOdd(i)){
-                    html = html + "*"
+            if (gameArray[index].contains == battleship) {
+                if (isOdd(index)) {
+                    html = html + battleship.symbol;
+                } else {
+                    html = html + battleship.symbol + "  ";
                 }
-                else
-                {html = html + "*  "}
             }
-        }
-		// Create and place instances of Ships;
-		// var carrier = new Ship()
+            if (gameArray[index.contains == cruiser) {
+                if (isOdd(index)) {
+                    html = html + cruiser.symbol;
+                } else {
+                    html = html + cruiser.symbol + "  ";
+                }
+            }
+            if (gameArray[index.contains == submarine) {
+                if (isOdd(index)) {
+                    html = html + submarine.symbol;
+                } else {
+                    html = html + submarine.symbol + "  ";
+                }
+            }
+            if (gameArray[index.contains == destroyer) {
+                if (isOdd(index)){
+                    html = html + destroyer.symbol;
+                } else {
+                    html = html + destroyer.symbol + "  ";
+                }
+            }
+         }
+      }
         document.getElementById("part3").innerHTML = html;
     }
 
@@ -375,38 +415,43 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 	// update both the Model and the View;
 	// make able to handle 2 args;
-    function updateGameArray(guessX, guessY){
-        alert("updateGameArray - " + guessX);
-		alert("updateGameArray - " + guessY;
-        //alert("updateGameArray - " + gameArray[guess2]);
+    function updateGameArray(guessX, guessY) {
+      alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
 		// Add handling for multiple ship types, differentiating
 		// between them;
-        if (gameArray[guessX].equals("empty")){
+      let index = convertCoordsToIndex(guessX, guessY);
+      if (gameArray[index].contains(null)) {
+        // Place 'miss' Ship object here to reflect a miss;
+        gameArray[index].contains = miss;
+		    countMisses++;
+			  countTries++;
+	      }else if (gameArray[guess2] == ship) {
+    		   gameArray[guess2] = hit;
+			     countHits++;
+		    }else if (gameArray[guess2] == miss) {
 			gameArray[guess2] = miss;
-			countMisses++;
 			countTries++;
-		}else if (gameArray[guess2] == ship){
-    		gameArray[guess2] = hit;
-			countHits++;
-		}else if (gameArray[guess2] == miss) {
-			gameArray[guess2] = miss;
-			countTries++;
-		}else if (gameArray[guess2] == hit) {
+		   }else if (gameArray[guess2] == hit) {
 			gameArray[guess2] = hit;
 			countTries++;
 		}
     }
 
 
-    function getUpdateDisplay(){
-        var guessX = -1;
-        guessX = getGuessX();
-		var guessY = -1;
-		guessY = getGuessY();
-	    //alert("after getGuess -" + guess1);
-	    updateGameArray(guessX, guessY);
-	    dispgameArray();
-	    dispBoard();
+    function getUpdateDisplay() {
+
+      // Get user input;
+        var guessX = getGuessX();
+		    var guessY = getGuessY();
+        // Validate user input;
+        while(guessX < 0 || guessX > 9) || (guessY < 0 || guessY > 9) {
+          alert("Enter coordinates between 0 and 9 please: ");
+          getUpdateDisplay();
+        }
+	      //alert("after getGuess -" + guess1);
+	      updateGameArray(guessX, guessY);
+	      dispgameArray();
+	      dispBoard();
     }
 
 	// the pretty pictures (updates the View);
