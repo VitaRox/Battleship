@@ -68,7 +68,7 @@
     this.getCol = function() {
       return this.x;
     }
-    this.setCol(newCol) = function() {
+    this.setCol = function(newCol) {
       this.x = newCol;
     }
 
@@ -76,8 +76,7 @@
     this.getRow = function() {
       return this.y;
     }
-
-    this.setRow(newRow) = function() {
+    this.setRow = function(newRow) {
       this.y = newRow;
     }
 
@@ -86,7 +85,7 @@
     this.getContents = function() {
       return this.contains;
     }
-    this.setContents(newCont) = function() {
+    this.setContents = function(newCont) {
       this.contains = newCont;
     }
 
@@ -96,7 +95,7 @@
     this.getIndex = function() {
       return this.index;
     }
-    this.setIndex(newIndex) = function() {
+    this.setIndex = function(newIndex) {
       this.index = newIndex;
     }
 
@@ -285,7 +284,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
   				} else {
             // Reset any indices of gameArray to null to restart process;
             for(let i = row; i < ship.getSize(); i++) {
-              (gameArray[index].setContents(null);
+              gameArray[index].setContents(null);
     					// No room; try again somewhere else;
               // Recursive case:
               hasSpace(ship);
@@ -302,7 +301,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
   				let index = convertCoordsToIndex(col, row);
   				if(index < 100) {
             // ....if that space is available...
-  					if(gameArray[index].getContents() == null)) {
+  					if(gameArray[index].getContents() == null) {
   						// ...place the Ship;
   						gameArray[index].setContents(ship);
   					}
@@ -536,7 +535,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
                 {html = html + "<img src='water.png' alt='1' height='25' width='25'>  "}
             // Handle case in which must be displayed on new line;
           } else if ((gameArray[index] instanceof Ship) && (gameArray[index].getContents() != miss)
-                && (gameArray[index].getContents() != hit) && (col == 9) {
+                && (gameArray[index].getContents() != hit) && (col == 9)) {
                 if (isOdd(index)){
                     html = html + "<img src='water.png' alt='1' height='25' width='25'><br>"
                 }
