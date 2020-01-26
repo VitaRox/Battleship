@@ -18,7 +18,7 @@
 
 	// A 1D array of Cells to track position of vessels and places
 	// where hits and misses have taken place;
-    // Indices 0-99, so no need to deal with 3-digit case;
+  // Indices 0-99, so no need to deal with 3-digit case;
     var gameArray = new Array(100);
 
 	// Our counters/accumulators:
@@ -32,7 +32,7 @@
     var countTries = 0;
     var countMisses = 0;
     var countHits = 0;
-	var shipsSunk = 0;
+	  var shipsSunk = 0;
     // An array to check to determine whether a hit has taken place.
     var hitSymbols = ["A","B","C","S","D"];
 
@@ -44,12 +44,12 @@
 	}
 
 	// Can use to determine whether a Ship is vertical or horizontally placed;
-    function isOdd(num) {
+  function isOdd(num) {
 	   if (num % 2 === 0){
-			return false;
-    	} else {
-       	return true;
-     	}
+			 return false;
+     } else {
+       return true;
+     }
 	}
 
 	// generates a random number between 1 and 20;
@@ -63,99 +63,97 @@
 	function Cell(x, y, contains, index) {
 
 		// x = col, y = row;
-	    // Each parameter in this object has a getter and a setter;
+    // Each parameter in this object has a getter and a setter;
 		x = this.x;
-	    this.getCol = function() {
-	      return this.x;
-	    }
-	    this.setCol = function(newCol) {
-	      this.x = newCol;
-	    }
+    this.getCol = function() {
+      return this.x;
+    }
+    this.setCol = function(newCol) {
+      this.x = newCol;
+    }
 
-	    y = this.y;
-	    this.getRow = function() {
-	      return this.y;
-	    }
-	    this.setRow = function(newRow) {
-	      this.y = newRow;
-	    }
+    y = this.y;
+    this.getRow = function() {
+      return this.y;
+    }
+    this.setRow = function(newRow) {
+      this.y = newRow;
+    }
 
-	    // Contains is the Ship Object contained in said Cell;
+    // Contains is the Ship Object contained in said Cell;
 		contains = this.contains;
-	    this.getContents = function() {
-	      return this.contains;
-	    }
-	    this.setContents = function(newCont) {
-	      this.contains = newCont;
-	    }
+    this.getContents = function() {
+      return this.contains;
+    }
+    this.setContents = function(newCont) {
+      this.contains = newCont;
+    }
 
 		// Use to store index of position in 1D array as generated and placed;
-	    // -1 is a dummy value;
-		 index = -1;
-	    this.getIndex = function() {
-	      return this.index;
-	    }
-	    this.setIndex = function(newIndex) {
-	      this.index = newIndex;
-	    }
+    // -1 is a dummy value;
+	  index = -1;
+    this.getIndex = function() {
+      return this.index;
+    }
+    this.setIndex = function(newIndex) {
+      this.index = newIndex;
+    }
 
 		// beenGuessed a boolean to track whether this Cell has been selected before;
 		// used for short-circuit eval to check for bad input;
-	    // 'let' changed to 'var' so can be externally accessed;
+    // 'let' changed to 'var' so can be externally accessed;
 		var beenGuessed = false;
-	    this.getGuessed = function() {
-	      return this.beenGuessed;
-	    }
+    this.getGuessed = function() {
+      return this.beenGuessed;
+    }
 	}
 
 	// Create an Object constructor for the general Ship-type Object;
 	// Ships contain info about their size (# of spaces they occupy),
 	// name, a symbol to show where a hit has occurred, and when they
 	// will sink (when hitPoints == 0);
-	// Storing the data in an object instance will allow for the eventual
-	// modification of the game to support a specified number of instances
-	// of each vessel, a fun and challenging feature I want to add;
+  // Storing the data in an object instance will allow for the eventual
+  // modification of the game to support a specified number of instances
+  // of each vessel, a fun and challenging feature I want to add;
 	function Ship(size, name, symbol) {
 
 		// Size is number of spaces Ship occupies;
 		this.size = size;
-	    this.getSize = function() {
-	      return this.size;
-	    }
-
+    this.getSize = function() {
+      return this.size;
+    }
 		// Name is a string of the type of vessel;
 		this.name = name;
-	    this.getName = function() {
-	      return this.name;
-	    }
-
+    this.getName = function() {
+      return this.name;
+    }
 		// Symbol is an abbreviation for the vessel's name;
 		// To be used for showing where hits have taken place.
 		this.symbol = symbol;
-	    this.getSymbol = function() {
-	      return this.symbol;
-	    }
+    this.getSymbol = function() {
+      return this.symbol;
+    }
 
 		// hitPoints initially equal to the number of spaces the Ship-type
 		// occupies.
 		let hitPoints = size;
 
-	    // hitPoints tracks which individual vessels have been sunk;
+    // hitPoints tracks which individual vessels have been sunk;
 		if(hitPoints == 0) {
 			shipsSunk++;
-	        alert("The " + this.name + " has been sunk!");
+      alert("The " + this.name + " has been sunk!");
 		}
 
 		// If isOdd() returns true, isVertical == true;
 		var isVertical = determineVertical();
-	    this.getVertical = function() {
-	      return this.isVertical;
-	    }
+    this.getVertical = function() {
+      return this.isVertical;
+    }
 	}
 
 	// The following instantiates the Ship objects representing each vessel;
 	// The isOdd() function is being repurposed inside determineVertical()
-    // to determine whether the vessel is to be placed vertically or horizontally;
+  // to determine whether the vessel is to be placed vertically or horizontally;
 	// isOdd(): vertical;
 	// !isOdd(): horizontal;
 
@@ -165,8 +163,8 @@
 	var cruiser = new Ship(3, "cruiser", "C");
 	var submarine = new Ship(3, "submarine", "S");
 	var destroyer = new Ship(2, "destroyer", "D");
-    var miss = new Ship(1000, "miss", "M");
-    var hit = new Ship(1000, "hit", "H");
+  var miss = new Ship(1000, "miss", "M");
+  var hit = new Ship(1000, "hit", "H");
 
   // A function to initialize each of the Model's elements to a string,
   // called "empty" or a null reference if using Object approach;
@@ -221,7 +219,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	// (col, row) value;
 	// Use for placing Ships;
 	// Test: passed, returns expected values;
-    // Ironic: I may ultimately not need this at all.
+  // Ironic: I may ultimately not need this at all.
 	function convertIndexToCoords(index) {
 		// Initialize (col, row) to dummy values;
 		let col = -1;
@@ -234,7 +232,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 			// else: if index > 9;
 		} else {
 			// Convert index to a string;
-            // Had to change 'let' to 'var' to allow access outside of else{};
+      // Had to change 'let' to 'var' to allow access outside of else{};
 			var tempDex = index.toString();
 			// Break said string into 2 components and convert to
 			// base-10 Numbers;
@@ -292,8 +290,8 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
               hasSpace(ship);
               // Return to end this call in the callstack;
               return;
-            	}
-  			}
+            }
+  				}
   		}
   		// If Ship is horizontal:
   		} else {
@@ -302,39 +300,39 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
   				// If: not off the board, and...
   				let index = convertCoordsToIndex(col, row);
   				if(index < 100) {
-            		// ....if that space is available...
+            // ....if that space is available...
   					if(gameArray[index].getContents() == null) {
   						// ...place the Ship;
   						gameArray[index].setContents(ship);
   					}
-          		// Recursive case:
+          // Recursive case:
   				} else {
-            	hasSpace(ship);
-            	// Return to end this call in the callstack;
-            	return;
-          		}
+            hasSpace(ship);
+            // Return to end this call in the callstack;
+            return;
+          }
   			}
-  	 	}
-	    // Base case: exit function, having placed the ship in question;
-	    return;
-    }
+  	 }
+     // Base case: exit function, having placed the ship in question;
+     return;
+  }
 
-    // this is the display of the Model, the array tracking hits and misses
-    // and ship position;
+	  // this is the display of the Model, the array tracking hits and misses
+	  // and ship position;
     function dispgameArray() {
 
         // var i = 0; commented out as unnecessary;
         var html = "";
 
 	     // Creates the array tracking ship positions and where hits/misses
-	    // have occurred; need additional dimensions covered both in Model and
-	    // visually in the View component;
-        // Include handling for each type of vessel;
-        // Tells how many Cells in gameArray have not been guessed at yet;
+		   // have occurred; need additional dimensions covered both in Model and
+		   // visually in the View component;
+       // Include handling for each type of vessel;
+       // Tells how many Cells in gameArray have not been guessed at yet;
         alert((gameArray.length - countTries) + " unchecked spaces remaining in gameArray.");
 
-        // This controls the display of the game;
-		// alternatively: for(const Cell of gameArray){}
+       // This controls the display of the game;
+		   // alternatively: for(const Cell of gameArray){}
         for (col = 0; col < 10; col++) {
           for(row = 0; row < 10; row++) {
             // Internally convert coords to index here:
@@ -428,7 +426,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         alert("getGuessX");
         var guessIsBad = true;
         while (guessIsBad) {
-            let guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
+            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
             // alert(guessX);
             // alert(parseInt(guessX));
             if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)) {
@@ -442,10 +440,10 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         return parseInt(guessX);
     }
 
-    // get user's Y-coordinate guess;
-	function getGuessY() {
+	  // get user's Y-coordinate guess;
+	  function getGuessY() {
        alert("getGuessY");
-       let guessIsBad = true;
+       var guessIsBad = true;
        while (guessIsBad) {
            var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
            // alert(guessY);
@@ -470,13 +468,13 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
       alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
 		// Add handling for multiple ship types, differentiating
 		// between them;
-        let index = convertCoordsToIndex(guessX, guessY);
-        if (gameArray[index].getContents() == null) {
+      let index = convertCoordsToIndex(guessX, guessY);
+      if (gameArray[index].getContents() == null) {
         // Place 'miss' Ship object here to reflect a miss;
         gameArray[index].setContents(miss);
 		    countMisses++;
-			countTries++;
-		} else {
+			  countTries++;
+	    } else {
         // Create pointer to Ship contained in current array index;
         let currShip = gameArray[index].getContents();
         // Decrement that hit-ship's hitPoints;
@@ -485,21 +483,21 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         gameArray[index].setContents(hit);
         countHits++;
         countTries++;
-        }
+      }
     }
 
     // Get and validate user input;
     // Update the view;
     function getUpdateDisplay() {
 
-        // Get user input;
+      // Get user input;
         var guessX = getGuessX();
-		var guessY = getGuessY();
+		    var guessY = getGuessY();
 
 
-	    updateGameArray(guessX, guessY);
-	    dispgameArray();
-	    dispBoard();
+	      updateGameArray(guessX, guessY);
+	      dispgameArray();
+	      dispBoard();
 
     }
 
