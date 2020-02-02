@@ -19,7 +19,8 @@
 	// A 1D array of Cells to track position of vessels and places
 	// where hits and misses have taken place;
     // Indices 0-99, so no need to deal with 3-digit case;
-    var gameArray = new Array(100);
+	// Initialized without number of elements specified; I didn't realize arrays were dynamic in JS vs. Java;
+    var gameArray = [];
 
 	// Our counters/accumulators:
 
@@ -65,7 +66,7 @@
 		// x = col, y = row;
 	    // Each parameter in this object has a getter and a setter;
 		x = this.x;
-	    this.getCol = function() {
+	    var getCol = function() {
 	      return this.x;
 	    }
 	    function setCol(newCol) {
@@ -73,7 +74,7 @@
 	    }
 
 	    y = this.y;
-	    this.getRow = function() {
+	    var getRow = function() {
 	      return this.y;
 	    }
 	    function setRow(newRow) {
@@ -82,7 +83,7 @@
 
 	    // Contains is the Ship Object contained in said Cell;
 		contains = this.contains;
-	    this.getContents = function() {
+	    var getContents = function() {
 	      return this.contains;
 	    }
 	    function setContents(newCont) {
@@ -92,7 +93,7 @@
 		// Use to store index of position in 1D array as generated and placed;
 	    // -1 is a dummy value;
 		index = -1;
-	    this.getIndex = function() {
+	    var getIndex = function() {
 	      return this.index;
 	    }
 	    function setIndex(newIndex) {
@@ -119,18 +120,18 @@
 
 		// Size is number of spaces Ship occupies;
 		this.size = size;
-        this.getSize = function() {
+        var getSize = function() {
         	return this.size;
     	}
 		// Name is a string of the type of vessel;
 		this.name = name;
-    	this.getName = function() {
+    	var getName = function() {
       		return this.name;
     	}
 		// Symbol is an abbreviation for the vessel's name;
 		// To be used for showing where hits have taken place.
 		this.symbol = symbol;
-    	this.getSymbol = function() {
+    	var getSymbol = function() {
       		return this.symbol;
     	}
 
@@ -146,7 +147,7 @@
 
 		// If isOdd() returns true, isVertical == true;
 		var isVertical = determineVertical();
-    	this.getVertical = function() {
+    	function getVertical() {
       		return this.isVertical;
     	}
 	}
@@ -164,8 +165,11 @@
 	var cruiser = new Ship(3, "cruiser", "C");
 	var submarine = new Ship(3, "submarine", "S");
 	var destroyer = new Ship(2, "destroyer", "D");
+
+	// The following are fake "Ships" for data purposes;
     var miss = new Ship(1000, "miss", "M");
     var hit = new Ship(1000, "hit", "H");
+	var empty = new Ship(1000, "empty", "E");
 
     // A function to initialize each of the Model's elements to a string,
     // called "empty" or a null reference if using Object approach;
@@ -184,37 +188,13 @@
 		           // row = x, col = y;
 		           // alternate approach: store null
 		           // references to indicate empty;
-		           gameArray[i].push(new Cell(row, col, null, i));
-		           console.log("row: " + gameArray[i].getRow + "col: " + gameArray[i].getCol);
+				   let currCell = new Cell(col, row, empty, i);
+		           gameArray[i] = currCell;
+		           console.log("col: " + currCell.getCol + "  row: " + currCell.getRow);
 	        	}
 	    	}
     	}
     }
-
-    // Place our ships in the game grid;
-    hasSpace(aircraftCarrier);
-    hasSpace(battleship);
-    hasSpace(cruiser);
-    hasSpace(submarine);
-    hasSpace(destroyer);
-
-    // Set up game initially;
-    initializeGameArray(gameArray);
-    dispgameArray();
-
-    // getUpdateDisplay();  unnecessary, as GUESS button triggers this;
-    // shipLocator(); unnecessary to this version, replaced by hasSpace;
-    dispgameArray();
-    dispBoard();
-    //guess1 = getGuess();
-    //updateGameArray(guess1);
-    //dispgameArray();
-
-// for(let i = 0; i < 10; i++) {
-//     document.getElementById("part1").innerHTML = "XX XX XX XX XX" + "<br />";
-//
-// }
-document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" + "<br />";
 
 	// A function to convert gameArray index to corresponding
 	// (col, row) value;
@@ -269,42 +249,44 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
   		// Generate a random (x,y) coordinate;
   		let col = Math.floor(Math.random()*9);
   		let row = Math.floor(Math.random()*9);
-
+		let index = convertCoordsToIndex(col, row);
+		// Assign value stored in array at index as a temp variable
+		// in order to access properties of associated object;
+		let currShip = gameArray[index];
   		// If Ship is vertical:
-  		if(ship.getVertical()) {
+  		if(ship.isVertical) {
   			// Increment the row to place Ship lengthwise;
-  			for(let i = row; i < ship.getSize(); i++) {
-  				let index = convertCoordsToIndex(col, row);
+  			for(let i = row; i < ship.getSize; i++) {
   				// If: not off the board, and...
   				if(index < 100) {
   					// ...if the space is unoccupied:
-  					if(gameArray[index].getContents == null) {
+  					if(currShip.getContents == empty) {
     					// place the ship
-    					gameArray[index].setContents(ship);
+    					currShip.setContents(ship);
   					}
   				} else {
 		            // Reset any indices of gameArray to null to restart process;
-		            for(let i = row; i < ship.getSize(); i++) {
-		            gameArray[index].setContents(null);
-	    					// No room; try again somewhere else;
-	                // Recursive case:
-	                hasSpace(ship);
-	                // Return to end this call in the callstack;
-	                return;
-            }
+		            for(let i = row; i < ship.getSize; i++) {
+			            currShip.setContents(empty);
+		    			// No room; try again somewhere else;
+		                // Recursive case:
+		                hasSpace(ship);
+		                // Return to end this call in the callstack;
+		                return;
+            		}
   				}
-  		}
+  			}
   		// If Ship is horizontal:
   		} else {
   			// Increment the col to place Ship sideways;
   			for(let i = col; i < ship.getSize; i++) {
   				// If: not off the board, and...
-  				let index = convertCoordsToIndex(col, row);
+  				//let index = convertCoordsToIndex(col, row);
   				if(index < 100) {
             		// ....if that space is available...
-  					if(gameArray[index].getContents == null) {
+  					if(currShip.getContents == empty) {
   						// ...place the Ship;
-  						gameArray[index].setContents(ship);
+  						currShip.setContents(ship);
   					}
           		// Recursive case:
   				} else {
@@ -318,6 +300,33 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	    return;
     }
 
+	// Place our ships in the game grid;
+    hasSpace(aircraftCarrier);
+    hasSpace(battleship);
+    hasSpace(cruiser);
+    hasSpace(submarine);
+    hasSpace(destroyer);
+	hasSpace(empty);
+
+    // Set up game initially;
+    initializeGameArray(gameArray);
+    dispgameArray();
+
+    // getUpdateDisplay();  unnecessary, as GUESS button triggers this;
+    // shipLocator(); unnecessary to this version, replaced by hasSpace;
+    dispgameArray();
+    dispBoard();
+    //guess1 = getGuess();
+    //updateGameArray(guess1);
+    //dispgameArray();
+
+// for(let i = 0; i < 10; i++) {
+//     document.getElementById("part1").innerHTML = "XX XX XX XX XX" + "<br />";
+//
+// }
+document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" + "<br />";
+
+
 	  // this is the display of the Model, the array tracking hits and misses
 	  // and ship position;
     function dispgameArray() {
@@ -328,19 +337,19 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	     // Creates the array tracking ship positions and where hits/misses
 		   // have occurred; need additional dimensions covered both in Model and
 		   // visually in the View component;
-       // Include handling for each type of vessel;
-       // Tells how many Cells in gameArray have not been guessed at yet;
-        alert((gameArray.length - countTries) + " unchecked spaces remaining in gameArray.");
+        // Include handling for each type of vessel;
+        // Tells how many Cells in gameArray have not been guessed at yet;
+        alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
 
-       // This controls the display of the game;
-		   // alternatively: for(const Cell of gameArray){}
+        // This controls the display of the game;
+		// alternatively: for(const Cell of gameArray){}
         for (col = 0; col < 10; col++) {
-          for(row = 0; row < 10; row++) {
+           for(row = 0; row < 10; row++) {
             // Internally convert coords to index here:
             let index = convertCoordsToIndex(col, row);
 
             // Display empty Cells;
-            if (gameArray[index].getContents() == null) {
+            if (gameArray[index].getContents == empty) {
                 if (isOdd(index)) {
                     html = html + "X";
                 } else {
@@ -348,49 +357,49 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
                 }
             }
             // Check if contains empty when fired upon;
-            if (gameArray[index].getContents() == miss){
+            if (gameArray[index].getContents == miss){
                 if (isOdd(index)) {
                     html = html + miss.getSymbol();
                 } else {
                     html = html + miss.getSymbol() + "  ";
                 }
             }
-            if (gameArray[index].getContents() == aircraftCarrier) {
+            if (gameArray[index].getContents == aircraftCarrier) {
                 if (isOdd(index)) {
                     html = html + aircraftCarrier.getSymbol();
                 } else {
                   html = html + aircraftCarrier.getSymbol() + "  ";
                 }
             }
-            if (gameArray[index].getContents() == battleship) {
+            if (gameArray[index].getContents == battleship) {
                 if (isOdd(index)) {
                     html = html + battleship.getSymbol();
                 } else {
                     html = html + battleship.getSymbol() + "  ";
                 }
             }
-            if (gameArray[index].getContents() == cruiser) {
+            if (gameArray[index].getContents == cruiser) {
                 if (isOdd(index)) {
                     html = html + cruiser.getSymbol();
                 } else {
                     html = html + cruiser.getSymbol() + "  ";
                 }
             }
-            if (gameArray[index].getContents() == submarine) {
+            if (gameArray[index].getContents == submarine) {
                 if (isOdd(index)) {
                     html = html + submarine.getSymbol();
                 } else {
                     html = html + submarine.getSymbol() + "  ";
                 }
             }
-            if (gameArray[index].getContents() == destroyer) {
+            if (gameArray[index].getContents == destroyer) {
                 if (isOdd(index)) {
                     html = html + destroyer.getSymbol();
                 } else {
                     html = html + destroyer.getSymbol() + "  ";
                 }
             }
-            if (gameArray[index].getContents() == hit) {
+            if (gameArray[index].getContents == hit) {
               if (isOdd(index)) {
                   html = html + hit.getSymbol();
               } else {
@@ -470,14 +479,16 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 		// Add handling for multiple ship types, differentiating
 		// between them;
         let index = convertCoordsToIndex(guessX, guessY);
-        if (gameArray[index].getContents == null) {
+		let currGuess = gameArray[index];
+        if (currGuess.getContents == empty) {
 	        // Place 'miss' Ship object here to reflect a miss;
 	        gameArray[index].setContents(miss);
-			    countMisses++;
-				countTries++;
+			countMisses++;
+			countTries++;
 	    } else {
+			let currCell = gameArray[index];
 	        // Create pointer to Ship contained in current array index;
-	        let currShip = gameArray[index].getContents;
+	        let currShip = currCell.getContents;
 	        // Decrement that hit-ship's hitPoints;
 	        currShip.hitPoints--;
 	        // Update the model and view;
@@ -511,19 +522,18 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
             let index = convertCoordsToIndex(col, row);
             //alert("gameArray -" + gameArray[i] + "i - " + i);
             // If: contains an unempty, unguessed Cell;
-            if (gameArray[index].getContents() == null) {
+            if (gameArray[index].getContents == empty) {
                 if (isOdd(index)){
                     html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
                 }
                 else
                 {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
             // Handle case in which must begin being
-		} else if(gameArray[index].getContents() == null && (col == 9)) {
+			} else if(gameArray[index].getContents == empty && (col == 9)) {
                 if (isOdd(index)){
                     html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a><br>"
-                }
-                else
-                {html = html + "<img src='water.png' alt='1' height='25' width='25'><br> "}
+                } else {
+					html = html + "<img src='water.png' alt='1' height='25' width='25'><br> "}
             }
             // If: it contains a Ship that hasn't been guessed at yet;
             else if ((gameArray[index] instanceof Ship) && (gameArray[index].getContents != miss)
@@ -534,8 +544,8 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
                 else
                 {html = html + "<img src='water.png' alt='1' height='25' width='25'>  "}
             // Handle case in which must be displayed on new line;
-          } else if ((gameArray[index] instanceof Ship) && (gameArray[index].getContents != miss)
-                && (gameArray[index].getContents != hit) && (col == 9)) {
+          	} else if ((gameArray[index] instanceof Ship) && (gameArray[index].getContents != miss)
+            && (gameArray[index].getContents != hit) && (col == 9)) {
                 if (isOdd(index)){
                     html = html + "<img src='water.png' alt='1' height='25' width='25'><br>"
                 }
@@ -580,7 +590,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         document.getElementById("part1").innerHTML = html;
         document.getElementById("part5").innerHTML = "Tries - " + countTries + " Misses - " + countMisses + " Hits = " + countHits + "Ships sunk = " + shipsSunk;
         if (countTries > 8) {
-           document.getElementById("part6").innerHTML ="The ships ESCAPED!"
+           document.getElementById("part6").innerHTML = "The ships ESCAPED!"
         }
         else if(shipsSunk == 5) {
           document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. "
