@@ -254,7 +254,7 @@
 		// in order to access properties of associated object;
 		let currShip = gameArray[index];
   		// If Ship is vertical:
-  		if(ship.isVertical) {
+  		if(ship.getVertical()) {
   			// Increment the row to place Ship lengthwise;
   			for(let i = row; i < ship.getSize; i++) {
   				// If: not off the board, and...
