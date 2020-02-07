@@ -245,6 +245,10 @@
 	// Cell in gameArray;
 	// Pass in the Ship it is checking for to place;
     // This function also places the ships within the gameArray;
+	// !!: maybe need to instantiate Ship inside this function?
+	// clone object that is passed in to obtain properties and metods
+
+
 	function hasSpace(ship) {
   		// Generate a random (x,y) coordinate;
   		let col = Math.floor(Math.random()*9);
