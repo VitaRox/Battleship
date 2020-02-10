@@ -9,17 +9,15 @@
     <p id="part1">Part 1</p>
     <p id="part2"></p>
     <p id="part3"></p>
-    <p id="part4"><button type=button onclick=getUpdateDisplay()>GUESS</button></p>
+    <p id="part4"><button type="button" onclick="getUpdateDisplay()">GUESS</button></p>
     <p id="part5">Status</p>
     <p id="part6"></p>
     <p id="part7"></p>
 
 <script>
 
-	// A 1D array of Cells to track position of vessels and places
-	// where hits and misses have taken place;
-    // Indices 0-99, so no need to deal with 3-digit case;
-	// Initialized without number of elements specified; I didn't realize arrays were dynamic in JS vs. Java;
+	// document.addEventListener("click", getUpdateDisplay());
+	// Create empty array to represent game logic;
     var gameArray = [];
 
 	// Our counters/accumulators:
@@ -58,6 +56,42 @@
 	function determineVertical() {
 		return isOdd(genRandNum());
 	}
+
+	// get user's X-coordinate guess;
+    function getGuessX() {
+        alert("getGuessX");
+        var guessIsBad = true;
+        while (guessIsBad) {
+            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
+            // alert(guessX);
+            // alert(parseInt(guessX));
+            if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)) {
+              guessIsBad = false;
+              // The following line is unnecessary, as this will break
+              // out of while loop if (!guessIsBad) (i.e. if input is valid)
+              // return parseInt(guessX);
+            }
+            alert("GuessX is bad? " + guessIsBad);
+        }
+        return parseInt(guessX);
+    }
+
+	  // get user's Y-coordinate guess;
+	  function getGuessY() {
+       alert("getGuessY");
+       var guessIsBad = true;
+       while (guessIsBad) {
+           var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
+           // alert(guessY);
+           // alert(parseInt(guessY));
+           if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)) {
+              // Update guessIsBad to exit validation (while) loop;
+              guessIsBad = false;
+            }
+           alert("guessY is bad?" + guessIsBad);
+        }
+        return parseInt(guessY);
+    }
 
 	// A function to convert gameArray index to corresponding
 	// (col, row) value;
@@ -102,6 +136,210 @@
 		let index = parseInt(strDex, 10);
 		return index;
 	}
+
+	// A function to initialize each of the Model's elements to 0,
+	// representing an empty and unguessed element state;
+    function initializeGameArray(gameArray) {
+	    alert("initializeGameArray");
+	    for(let i = 0; i < 100; i++) {
+			   console.log(gameArray[i]);
+	           gameArray[i] = 0;
+    	}
+	}
+
+	// this is the display of the Model, the array tracking hits and misses
+	// and ship position;
+    function dispgameArray() {
+
+        // var i = 0; commented out as unnecessary;
+        var html = "";
+
+	    // Creates the array tracking ship positions and where hits/misses
+	    // have occurred; need additional dimensions covered both in Model and
+	    // visually in the View component;
+        // Include handling for each type of vessel;
+        // Tells how many Cells in gameArray have not been guessed at yet;
+        alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
+
+        // This controls the display of the game;
+		// alternatively: for(const Cell of gameArray){}
+        for (col = 0; col < 10; col++) {
+           for(row = 0; row < 10; row++) {
+	            // Internally convert coords to index here:
+	            let index = convertCoordsToIndex(col, row);
+
+	            // Display empty Cells;
+	            if (gameArray[index] == 0) {
+	                if (isOdd(index)) {
+	                    html = html + "X";
+	                } else {
+	                    html = html + "X ";
+	                }
+	            }
+	            // Check if contains empty when fired upon;
+	            if (gameArray[index] == -1){
+	                if (isOdd(index)) {
+	                    html = html + miss;
+	                } else {
+	                    html = html + miss + "  ";
+	                }
+	            }
+	            if (gameArray[index] == 2) {
+	                if (isOdd(index)) {
+	                    html = html + aircraftCarrier.getSymbol;
+	                } else {
+	                  html = html + aircraftCarrier.getSymbol + "  ";
+	                }
+	            }
+	            if (gameArray[index] == 3) {
+	                if (isOdd(index)) {
+	                    html = html + battleship.getSymbol;
+	                } else {
+	                    html = html + battleship.getSymbol + "  ";
+	                }
+	            }
+	            if (gameArray[index] == 4) {
+	                if (isOdd(index)) {
+	                    html = html + cruiser.getSymbol;
+	                } else {
+	                    html = html + cruiser.getSymbol + "  ";
+	                }
+	            }
+	            if (gameArray[index] == 5) {
+	                if (isOdd(index)) {
+	                    html = html + submarine.getSymbol;
+	                } else {
+	                    html = html + submarine.getSymbol + "  ";
+	                }
+	            }
+	            if (gameArray[index] == 6) {
+	                if (isOdd(index)) {
+	                    html = html + destroyer.getSymbol;
+	                } else {
+	                    html = html + destroyer.getSymbol + "  ";
+	                }
+	            }
+	            if (gameArray[index] == 1) {
+	                if (isOdd(index)) {
+	                  html = html + hit;
+	                } else {
+	                  html = html + hit + "  ";
+	                }
+	            }
+        	}
+        }
+    document.getElementById("part3").innerHTML = html;
+    }
+
+  	// the pretty pictures (updates the View);
+    function dispBoard() {
+        var html = "";
+        // alert("disp Board");
+        for (col = 0; col < 10; col++) {
+          for (row = 0; row < 10; row++) {
+            let index = convertCoordsToIndex(col, row);
+			// If: empty;
+            if (gameArray[index] == 0) {
+                if (isOdd(index)){
+                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
+                }
+                else
+                {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
+        // Handle case in which must begin new row;
+		} else if(gameArray[index] == 0 && (col == 9)) {
+                if (isOdd(index)){
+                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a><br>"
+                } else {
+					html = html + "<img src='water.png' alt='1' height='25' width='25'><br> "}
+        }
+            // If contains a miss;
+            else if (gameArray[index] == miss) {
+                if (isOdd(index)){
+                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
+                }
+                else
+                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
+            }
+            // Start printing on new line when
+            else if (gameArray[index] == miss && (col == 9)) {
+                if (isOdd(index)){
+                    html = html + "<img src='miss.png' alt='1' height='25' width='25'><br>  "
+                }
+                else
+                {html = html + "<img src='miss.png' alt='1' height='25' width='25'><br>  "}
+            }
+            // If: is a hit when guessed;
+            else if(gameArray[index] == hit) {
+                if (isOdd(index)){
+                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
+                }
+                else
+                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+            }
+            // Case in which must move to next line;
+            else if(gameArray[index] == hit && (col == 9)) {
+                if (isOdd(index)){
+                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
+                }
+                else
+                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+            }
+          }
+        }
+        alert(html);
+        document.getElementById("part1").innerHTML = html;
+        document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
+        if (countTries > 8) {
+           document.getElementById("part6").innerHTML = "The ships ESCAPED!"
+        }
+        else if(shipsSunk == 5) {
+          document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. "
+        }
+        // if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
+    }
+
+	// Get and validate user input;
+    // Update the view;
+    function getUpdateDisplay() {
+
+        // Get user input;
+        var guessX = getGuessX();
+	    var guessY = getGuessY();
+
+	    updateGameArray(guessX, guessY);
+	    dispgameArray();
+	    dispBoard();
+    }
+
+	// Update data;
+    // Will change data (symbol in gameArray), which will update the
+    // appearance of the board;
+    function updateGameArray(guessX, guessY) {
+        alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
+        let index = convertCoordsToIndex(guessX, guessY);
+        if (gameArray[index] == empty) {
+	        // Place 'miss' Ship object here to reflect a miss;
+	        gameArray[index] == miss;
+			countMisses++;
+	    } else {
+			if(gameArray[index] == 2) {
+		        aircraftCarrier.hitPoints--;
+			} else if(gameArray[index] == 3) {
+				battleship.hitPoints--;
+			} else if(gameArray[index] == 4) {
+				cruiser.hitPoints--;
+			} else if(gameArray[index] == 5){
+				submarine.hitPoints--;
+			} else if(gameArray[index] == 6) {
+				destroyer.hitPoints--;
+			}
+			gameArray[index] = hit;
+			// Increment total hits made;
+			countHits++;
+		}
+		// Update the model and view, update global counters;
+		countTries++;
+    }
 
 	// Create an Object constructor for the general Ship-type Object;
 	// Ships contain info about their size (# of spaces they occupy),
@@ -219,15 +457,6 @@
 	var submarine = new Ship(3, "submarine", "5");
 	var destroyer = new Ship(2, "destroyer", "6");
 
-    // A function to initialize each of the Model's elements to 0,
-	// representing an empty and unguessed element state;
-    function initializeGameArray(gameArray) {
-	    alert("initializeGameArray");
-	    for(let i = 0; i < 100; i++) {
-			   console.log(gameArray[i]);
-	           gameArray[i] = 0;
-    	}
-	}
 
     // Set up game initially;
     initializeGameArray(gameArray);
@@ -240,14 +469,13 @@
 	destroyer.placeShip();
 
     dispgameArray();
-
-    // getUpdateDisplay();  unnecessary, as GUESS button triggers this;
-    // shipLocator(); unnecessary to this version, replaced by hasSpace;
+    getUpdateDisplay();  
     dispgameArray();
     dispBoard();
-    //guess1 = getGuess();
-    //updateGameArray(guess1);
-    //dispgameArray();
+    guessX = getGuessX();
+	guessY = getGuessY();
+    updateGameArray(guessX, guessY);
+    dispgameArray();
 
 for(let i = 0; i < 10; i++) {
     document.getElementById("part1").innerHTML = "XX XX XX XX XX" + "<br />";
@@ -255,272 +483,19 @@ for(let i = 0; i < 10; i++) {
 }
 document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" + "<br />";
 
-
-	  // this is the display of the Model, the array tracking hits and misses
-	  // and ship position;
-    function dispgameArray() {
-
-        // var i = 0; commented out as unnecessary;
-        var html = "";
-
-	    // Creates the array tracking ship positions and where hits/misses
-	    // have occurred; need additional dimensions covered both in Model and
-	    // visually in the View component;
-        // Include handling for each type of vessel;
-        // Tells how many Cells in gameArray have not been guessed at yet;
-        alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
-
-        // This controls the display of the game;
-		// alternatively: for(const Cell of gameArray){}
-        for (col = 0; col < 10; col++) {
-           for(row = 0; row < 10; row++) {
-	            // Internally convert coords to index here:
-	            let index = convertCoordsToIndex(col, row);
-
-	            // Display empty Cells;
-	            if (gameArray[index] == 0) {
-	                if (isOdd(index)) {
-	                    html = html + "X";
-	                } else {
-	                    html = html + "X ";
-	                }
-	            }
-	            // Check if contains empty when fired upon;
-	            if (gameArray[index] == -1){
-	                if (isOdd(index)) {
-	                    html = html + miss;
-	                } else {
-	                    html = html + miss + "  ";
-	                }
-	            }
-	            if (gameArray[index] == 2) {
-	                if (isOdd(index)) {
-	                    html = html + aircraftCarrier.getSymbol;
-	                } else {
-	                  html = html + aircraftCarrier.getSymbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] == 3) {
-	                if (isOdd(index)) {
-	                    html = html + battleship.getSymbol;
-	                } else {
-	                    html = html + battleship.getSymbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] == 4) {
-	                if (isOdd(index)) {
-	                    html = html + cruiser.getSymbol;
-	                } else {
-	                    html = html + cruiser.getSymbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] == 5) {
-	                if (isOdd(index)) {
-	                    html = html + submarine.getSymbol;
-	                } else {
-	                    html = html + submarine.getSymbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] == 6) {
-	                if (isOdd(index)) {
-	                    html = html + destroyer.getSymbol;
-	                } else {
-	                    html = html + destroyer.getSymbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] == 1) {
-	                if (isOdd(index)) {
-	                  html = html + hit;
-	                } else {
-	                  html = html + hit + "  ";
-	                }
-	            }
-        	}
-        }
-    document.getElementById("part3").innerHTML = html;
-    }
-
-
-	  // hack this to make useful for different ships;
-	  // this appears to place the ships within the board;
-	  // move to inside Ship constructor;
-	  // Takes a Ship object as arg;
-    // function shipLocator(ship) {
-    //     var location = 0;
-    //     alert(location);
-		//     // Range altered to reflect larger gameArray;
-    //     location = Math.floor(Math.random()*99);
-    //     var location =
-    //     alert("shipLocator() -" + location);
-    //
-    //
-    //
-    //     gameArray[location] = ship;
-    //     gameArray[location+1] = ship;
-    //     gameArray[location+2] = ship;
-    // }
-
-    // get user's X-coordinate guess;
-    function getGuessX() {
-        alert("getGuessX");
-        var guessIsBad = true;
-        while (guessIsBad) {
-            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
-            // alert(guessX);
-            // alert(parseInt(guessX));
-            if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)) {
-              guessIsBad = false;
-              // The following line is unnecessary, as this will break
-              // out of while loop if (!guessIsBad) (i.e. if input is valid)
-              // return parseInt(guessX);
-            }
-            alert("GuessX is bad? " + guessIsBad);
-        }
-        return parseInt(guessX);
-    }
-
-	  // get user's Y-coordinate guess;
-	  function getGuessY() {
-       alert("getGuessY");
-       var guessIsBad = true;
-       while (guessIsBad) {
-           var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
-           // alert(guessY);
-           // alert(parseInt(guessY));
-           if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)) {
-              // Update 'countTries', incrementing by one, since at this point,
-              // a valid X and Y guess has been made;
-              countTries++;
-              // Update guessIsBad to exit validation (while) loop;
-              guessIsBad = false;
-              // return parseInt(guessY)
-           }
-           alert("guessY is bad?" + guessIsBad);
-        }
-        return parseInt(guessY);
-    }
-
-	// update data;
-    // Will change data (symbol in gameArray), which will update the
-    // appearance of the board;
-    function updateGameArray(guessX, guessY) {
-        alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
-        let index = convertCoordsToIndex(guessX, guessY);
-        if (gameArray[index] == empty) {
-	        // Place 'miss' Ship object here to reflect a miss;
-	        gameArray[index] == miss;
-			countMisses++;
-	    } else if(gameArray[index] == 2) {
-	        aircraftCarrier.hitPoints--;
-		} else if(gameArray[index] == 3) {
-			battleship.hitPoints--;
-		} else if(gameArray[index] == 4) {
-			cruiser.hitPoints--;
-		} else if(gameArray[index] == 5){
-			submarine.hitPoints--;
-		} else if(gameArray[index] == 6) {
-			destroyer.hitPoints--;
-		}
-		// Mark element at 'index' to reflect a hit;
-	    gameArray[index] = hit;
-	    // Update the model and view, update global counters;
-	    countHits++;
-		countTries++;
-    }
-
-    // Get and validate user input;
-    // Update the view;
-    function getUpdateDisplay() {
-
-        // Get user input;
-        var guessX = getGuessX();
-	    var guessY = getGuessY();
-
-	    updateGameArray(guessX, guessY);
-	    dispgameArray();
-	    dispBoard();
-    }
-
-  	// the pretty pictures (updates the View);
-    function dispBoard() {
-        var html = "";
-        // alert("disp Board");
-        for (col = 0; col < 10; col++) {
-          for (row = 0; row < 10; row++) {
-            let index = convertCoordsToIndex(col, row);
-			// If: empty;
-            if (gameArray[index] == 0) {
-                if (isOdd(index)){
-                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
-                }
-                else
-                {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
-        // Handle case in which must begin new row;
-		} else if(gameArray[index] == 0 && (col == 9)) {
-                if (isOdd(index)){
-                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a><br>"
-                } else {
-					html = html + "<img src='water.png' alt='1' height='25' width='25'><br> "}
-        }
-            // If contains a miss;
-            else if (gameArray[index] == miss) {
-                if (isOdd(index)){
-                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
-                }
-                else
-                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
-            }
-            // Start printing on new line when
-            else if (gameArray[index] == miss && (col == 9)) {
-                if (isOdd(index)){
-                    html = html + "<img src='miss.png' alt='1' height='25' width='25'><br>  "
-                }
-                else
-                {html = html + "<img src='miss.png' alt='1' height='25' width='25'><br>  "}
-            }
-            // If: is a hit when guessed;
-            else if(gameArray[index] == hit) {
-                if (isOdd(index)){
-                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
-                }
-                else
-                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
-            }
-            // Case in which must move to next line;
-            else if(gameArray[index] == hit && (col == 9)) {
-                if (isOdd(index)){
-                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
-                }
-                else
-                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
-            }
-          }
-        }
-        alert(html);
-        document.getElementById("part1").innerHTML = html;
-        document.getElementById("part5").innerHTML = "Tries - " + countTries + " Misses - " + countMisses + " Hits = " + countHits + "Ships sunk = " + shipsSunk;
-        if (countTries > 8) {
-           document.getElementById("part6").innerHTML = "The ships ESCAPED!"
-        }
-        else if(shipsSunk == 5) {
-          document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. "
-        }
-        // if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
-    }
 }
 
 </script>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="/__/firebase/7.6.1/firebase-app.js"></script>
+<script src="/__/firebase/7.8.1/firebase-app.js"></script>
 
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="/__/firebase/7.6.1/firebase-analytics.js"></script>
+<script src="/__/firebase/7.8.1/firebase-analytics.js"></script>
 
 <!-- Initialize Firebase -->
 <script src="/__/firebase/init.js"></script>
-
 
 </body>
 </html>
