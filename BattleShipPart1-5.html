@@ -8,13 +8,13 @@
 <h1>Battleship Game</h1>
     <p id="part1">Part 1</p>
     <p id="part2"></p>
-    <p id="part3"></p>
+    <p id="part3" ></p>
     <p id="part4"><button type="button" onclick="getUpdateDisplay()">GUESS</button></p>
     <p id="part5">Status</p>
     <p id="part6"></p>
     <p id="part7"></p>
 
-<script>
+<script type="text/javascript">
 
 	// document.addEventListener("click", getUpdateDisplay());
 	// Create empty array to represent game logic;
@@ -33,6 +33,34 @@
     var countMisses = 0;
     var countHits = 0;
 	var shipsSunk = 0;
+
+    // Set up game initially;
+    initializeGameArray(gameArray);
+    dispgameArray();
+    getUpdateDisplay();
+    dispgameArray();
+    // dispBoard();
+    // let guessX = getGuessX();
+	// let guessY = getGuessY();
+    // updateGameArray(guessX, guessY);
+    dispgameArray();
+	dispBoard();
+
+// for(let i = 0; i < 10; i++) {
+//     document.getElementById("part1").innerHTML = "XX XX XX XX XX<br />";
+//
+// }
+document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" ;
+
+	// A function to initialize each of the Model's elements to 0,
+	// representing an empty and unguessed element state;
+    function initializeGameArray(gameArray) {
+	    alert("initializeGameArray");
+	    for(let i = 0; i < 100; i++) {
+			   console.log(gameArray[i]);
+	           gameArray[i] = 0;
+    	}
+	}
 
 	// Our helper methods;
 
@@ -56,42 +84,6 @@
 	function determineVertical() {
 		return isOdd(genRandNum());
 	}
-
-	// get user's X-coordinate guess;
-    function getGuessX() {
-        alert("getGuessX");
-        var guessIsBad = true;
-        while (guessIsBad) {
-            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
-            // alert(guessX);
-            // alert(parseInt(guessX));
-            if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)) {
-              guessIsBad = false;
-              // The following line is unnecessary, as this will break
-              // out of while loop if (!guessIsBad) (i.e. if input is valid)
-              // return parseInt(guessX);
-            }
-            alert("GuessX is bad? " + guessIsBad);
-        }
-        return parseInt(guessX);
-    }
-
-	  // get user's Y-coordinate guess;
-	  function getGuessY() {
-       alert("getGuessY");
-       var guessIsBad = true;
-       while (guessIsBad) {
-           var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
-           // alert(guessY);
-           // alert(parseInt(guessY));
-           if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)) {
-              // Update guessIsBad to exit validation (while) loop;
-              guessIsBad = false;
-            }
-           alert("guessY is bad?" + guessIsBad);
-        }
-        return parseInt(guessY);
-    }
 
 	// A function to convert gameArray index to corresponding
 	// (col, row) value;
@@ -137,15 +129,142 @@
 		return index;
 	}
 
-	// A function to initialize each of the Model's elements to 0,
-	// representing an empty and unguessed element state;
-    function initializeGameArray(gameArray) {
-	    alert("initializeGameArray");
-	    for(let i = 0; i < 100; i++) {
-			   console.log(gameArray[i]);
-	           gameArray[i] = 0;
+
+	// Create an Object constructor for the general Ship-type Object;
+	// Ships contain info about their size (# of spaces they occupy),
+	// name, a symbol to show where a hit has occurred, and when they
+	// will sink (when hitPoints == 0);
+    // Storing the data in an object instance will allow for the eventual
+    // modification of the game to support a specified number of instances
+    // of each vessel, a fun and challenging feature I want to add;
+	function Ship(size, name, symbol) {
+
+		// Size is number of spaces Ship occupies;
+		this.size = size;
+        var getSize = function() {
+        	return this.size;
     	}
+		// Name is a string of the type of vessel;
+		this.name = name;
+    	var getName = function() {
+      		return this.name;
+    	}
+		// Symbol is an abbreviation for the vessel's name;
+		// To be used for showing where hits have taken place.
+		this.symbol = symbol;
+    	var getSymbol = function() {
+      		return this.symbol;
+    	}
+
+		// hitPoints initially equal to the number of spaces the Ship
+		// occupies.
+		let hitPoints = size;
+
+    	// hitPoints tracks which individual vessels have been sunk;
+		if(hitPoints == 0) {
+			shipsSunk++;
+      		alert("The " + this.name + " has been sunk!");
+		}
+
+		// If isOdd() returns true, isVertical == true;
+		var isVertical = determineVertical();
+
+		// A recursive function to determine if
+	    // Ship can be placed at the corresponding element in gameArray;
+		// Pass in the Ship it is checking for to place;
+	    // This function also places the ships within the gameArray;
+		var placement = function placeShip() {
+
+	  		// If Ship is vertical:
+	  		if(isVertical) {
+				// Generate random X-coordinate;
+				let col = Math.floor(Math.random()*9);
+				// Generate random Y-coordinate (row) between 0 and (10 - size);
+				let row = Math.floor(Math.random()*(10 - getSize));
+				// originRow is a value to store the starting value of row
+				// that we have generated here;
+				let originRow = row;
+				// Determine gameArray starting placement
+				// index corresponding to (col, row);
+				let index = convertCoordsToIndex(col, row);
+
+				// Inspect possible spots to see if canPlace;
+				let canPlace = true;
+	  			for(let i = getSize; i > 0; i--) {
+
+  					// If the space is unoccupied:
+  					if(gameArray[index] == 0 && canPlace) {
+						// Continue inspecting potential spots, increment row;
+						index = convertCoordsToIndex(col, row++);
+					// Else: stop looking here, try again;
+					// Recursive case:
+  					} else {
+						canPlace = false;
+						placeShip();
+	  				}
+				}
+				// If it's been scouted and approved, place the vessel,
+				// beginning with the original generated row value;
+				if(canPlace) {
+					for(let i = getSize; i > 0; i--) {
+						index = convertCoordsToIndex(col, originRow);
+						gameArray[index] = getSymbol;
+						originRow++;
+					}
+	  			}
+	  		// If Ship is horizontal:
+	  		} else {
+				// Generate random X-coordinate between 0 and (10 - size);
+				let col = Math.floor(Math.random()*(10 - getSize));
+				// Generate random Y-coordinate between 0 and 9;
+				let row = Math.floor(Math.random()*9);
+				// originRow is a value to store the starting value of row
+				// that we have generated here;
+				let originCol = col;
+				// Determine gameArray starting placement
+				// index corresponding to (col, row);
+				let index = convertCoordsToIndex(col, row);
+				let canPlace = true;
+	  			// Increment the col to place Ship sideways;
+	  			for(let i = getSize; i > 0; i--) {
+            		// If that space is available:
+  					if(gameArray[index] == 0 && canPlace) {
+  						// Continue inspecting potential spots, increment row;
+						index = convertCoordsToIndex(col++, row);
+					// Recursive case:
+  					} else {
+						canPlace = false;
+            			placeShip();
+            		}
+				}
+				// If it's been scouted and approved, place the vessel,
+				// beginning with the original generated row value;
+				if(canPlace) {
+					for(let i = getSize; i > 0; i--) {
+						index = convertCoordsToIndex(originCol, row);
+						gameArray[index] = getSymbol;
+						originCol++;
+					}
+	  			}
+	  	    }
+		    // Base case: exit function, having placed the ship in question;
+		    return;
+		}
 	}
+
+	// The following instantiates the Ship objects representing each vessel;
+	// The isOdd() function is being repurposed inside determineVertical()
+    // to determine whether the vessel is to be placed vertically or
+	// horizontally;
+	// isOdd(): vertical;
+	// !isOdd(): horizontal;
+
+	// Instantiate Ship objects;
+	var aircraftCarrier = new Ship(5, "aircraftCarrier", "2");
+	var battleship = new Ship(4, "battleship", "3");
+	var cruiser = new Ship(3, "cruiser", "4");
+	var submarine = new Ship(3, "submarine", "5");
+	var destroyer = new Ship(2, "destroyer", "6");
 
 	// this is the display of the Model, the array tracking hits and misses
 	// and ship position;
@@ -154,11 +273,8 @@
         // var i = 0; commented out as unnecessary;
         var html = "";
 
-	    // Creates the array tracking ship positions and where hits/misses
-	    // have occurred; need additional dimensions covered both in Model and
-	    // visually in the View component;
-        // Include handling for each type of vessel;
-        // Tells how many Cells in gameArray have not been guessed at yet;
+	    // Creates the visual array tracking ship positions and where hits/misses
+	    // have occurred;
         alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
 
         // This controls the display of the game;
@@ -227,88 +343,51 @@
 	                }
 	            }
         	}
+			document.getElementById("part3").innerHTML = html;
         }
-    document.getElementById("part3").innerHTML = html;
+	}
+
+	// Place our Ships on the board;
+	aircraftCarrier.placement;
+	battleship.placement;
+	cruiser.placement;
+	submarine.placement
+	destroyer.placement;
+
+	// get user's X-coordinate guess;
+    function getGuessX() {
+        alert("getGuessX");
+        var guessIsBad = true;
+        while (guessIsBad) {
+            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
+            // alert(guessX);
+            // alert(parseInt(guessX));
+            if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)) {
+              guessIsBad = false;
+              // The following line is unnecessary, as this will break
+              // out of while loop if (!guessIsBad) (i.e. if input is valid)
+              // return parseInt(guessX);
+            }
+            alert("GuessX is bad? " + guessIsBad);
+        }
+        return parseInt(guessX);
     }
 
-  	// the pretty pictures (updates the View);
-    function dispBoard() {
-        var html = "";
-        // alert("disp Board");
-        for (col = 0; col < 10; col++) {
-          for (row = 0; row < 10; row++) {
-            let index = convertCoordsToIndex(col, row);
-			// If: empty;
-            if (gameArray[index] == 0) {
-                if (isOdd(index)){
-                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
-                }
-                else
-                {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
-        // Handle case in which must begin new row;
-		} else if(gameArray[index] == 0 && (col == 9)) {
-                if (isOdd(index)){
-                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a><br>"
-                } else {
-					html = html + "<img src='water.png' alt='1' height='25' width='25'><br> "}
-        }
-            // If contains a miss;
-            else if (gameArray[index] == miss) {
-                if (isOdd(index)){
-                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
-                }
-                else
-                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
+	  // get user's Y-coordinate guess;
+	  function getGuessY() {
+       alert("getGuessY");
+       var guessIsBad = true;
+       while (guessIsBad) {
+           var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
+           // alert(guessY);
+           // alert(parseInt(guessY));
+           if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)) {
+              // Update guessIsBad to exit validation (while) loop;
+              guessIsBad = false;
             }
-            // Start printing on new line when
-            else if (gameArray[index] == miss && (col == 9)) {
-                if (isOdd(index)){
-                    html = html + "<img src='miss.png' alt='1' height='25' width='25'><br>  "
-                }
-                else
-                {html = html + "<img src='miss.png' alt='1' height='25' width='25'><br>  "}
-            }
-            // If: is a hit when guessed;
-            else if(gameArray[index] == hit) {
-                if (isOdd(index)){
-                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
-                }
-                else
-                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
-            }
-            // Case in which must move to next line;
-            else if(gameArray[index] == hit && (col == 9)) {
-                if (isOdd(index)){
-                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
-                }
-                else
-                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
-            }
-          }
+           alert("guessY is bad?" + guessIsBad);
         }
-        alert(html);
-        document.getElementById("part1").innerHTML = html;
-        document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
-        if (countTries > 8) {
-           document.getElementById("part6").innerHTML = "The ships ESCAPED!"
-        }
-        else if(shipsSunk == 5) {
-          document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. "
-        }
-        // if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
-    }
-
-	// Get and validate user input;
-    // Update the view;
-    function getUpdateDisplay() {
-
-        // Get user input;
-        var guessX = getGuessX();
-	    var guessY = getGuessY();
-
-	    updateGameArray(guessX, guessY);
-	    dispgameArray();
-	    dispBoard();
+        return parseInt(guessY);
     }
 
 	// Update data;
@@ -341,161 +420,84 @@
 		countTries++;
     }
 
-	// Create an Object constructor for the general Ship-type Object;
-	// Ships contain info about their size (# of spaces they occupy),
-	// name, a symbol to show where a hit has occurred, and when they
-	// will sink (when hitPoints == 0);
-    // Storing the data in an object instance will allow for the eventual
-    // modification of the game to support a specified number of instances
-    // of each vessel, a fun and challenging feature I want to add;
-	function Ship(size, name, symbol) {
+	// Get and validate user input;
+    // Update the view;
+    function getUpdateDisplay() {
 
-		// Size is number of spaces Ship occupies;
-		this.size = size;
-        var getSize = function() {
-        	return this.size;
+        // Get user input;
+        var guessX = getGuessX();
+	    var guessY = getGuessY();
+
+	    updateGameArray(guessX, guessY);
+	    dispgameArray();
+	    dispBoard();
+    }
+
+  	// the pretty pictures (updates the View);
+    function dispBoard() {
+        var html = "";
+        alert("disp Board");
+        for (col = 0; col < 10; col++) {
+            for (row = 0; row < 10; row++) {
+	            let index = convertCoordsToIndex(col, row);
+				// If: empty;
+				// Handle case in which must begin new row;
+				if(gameArray[index] == empty && (col == 9)) {
+	                if (isOdd(index)){
+	                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a><br>"
+	                } else {
+						html = html + "<img src='water.png' alt='1' height='25' width='25'><br /> "}
+
+	            } else if (gameArray[index] == empty) {
+	                if (isOdd(index)){
+	                    html = html + "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>"
+	                }
+	                else
+	                {html = html + "<img src='water.png' alt='1' height='25' width='25'> "}
+
+	            // Start printing on new line when
+				} else if (gameArray[index] == miss && (col == 9)) {
+	                if (isOdd(index)){
+	                    html = html + "<img src='miss.png' alt='1' height='25' width='25'><br />  "
+	                }
+	                else
+	                {html = html + "<img src='miss.png' alt='1' height='25' width='25'><br />  "}
+				// If contains a miss;
+	        	} else if (gameArray[index] == miss) {
+	                if (isOdd(index)){
+	                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
+	                }
+	                else
+	                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
+	            // Case in which must move to next line;
+			    } else if(gameArray[index] == hit && (col == 9)) {
+	                if (isOdd(index)){
+	                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>"
+	                }
+	                else
+	                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>" }
+	            // If: is a hit when guessed;
+				} else if(gameArray[index] == hit) {
+	                if (isOdd(index)){
+	                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
+	                }
+	                else
+	                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+	            }
+        	}
     	}
-		// Name is a string of the type of vessel;
-		this.name = name;
-    	var getName = function() {
-      		return this.name;
-    	}
-		// Symbol is an abbreviation for the vessel's name;
-		// To be used for showing where hits have taken place.
-		this.symbol = symbol;
-    	var getSymbol = function() {
-      		return this.symbol;
-    	}
-
-		// hitPoints initially equal to the number of spaces the Ship
-		// occupies.
-		let hitPoints = size;
-
-    	// hitPoints tracks which individual vessels have been sunk;
-		if(hitPoints == 0) {
-			shipsSunk++;
-      		alert("The " + this.name + " has been sunk!");
-		}
-
-		// If isOdd() returns true, isVertical == true;
-		var isVertical = determineVertical();
-
-		// A recursive function to determine if
-	    // Ship can be placed at the corresponding element in gameArray;
-		// Pass in the Ship it is checking for to place;
-	    // This function also places the ships within the gameArray;
-		function placeShip() {
-
-	  		// If Ship is vertical:
-	  		if(isVertical) {
-				// Generate random X-coordinate;
-				let col = Math.floor(Math.random()*9);
-				// Generate random Y-coordinate between 0 and (10 - size);
-				let row = Math.floor(Math.random()*(10 - getSize));
-	  			// Increment the row to place Ship vertically;
-	  			for(let i = getSize; i > 0; i--) {
-					// Determine gameArray index corresponding to (col, row);
-					let index = convertCoordsToIndex(col, row);
-  					// If the space is unoccupied:
-  					if(gameArray[index] == 0) {
-    					// place the ship
-    					gameArray[index] = getSymbol;
-						// Update row to continue placing ship;
-						row++;
-					// Else: reset spaces to empty; try again;
-  					} else {
-			            // Reset any indices of gameArray to 0 to restart process;
-			            for(let i = getSize; i > 0; i--) {
-				            gameArray[index] = 0;
-			                // Recursive case:
-			                placeShip();
-			                // Return to end this call in the callstack;
-			                return;
-		            	}
-	  				}
-	  			}
-	  		// If Ship is horizontal:
-	  		} else {
-				// Generate random X-coordinate between 0 and (10 - size);
-				let col = Math.floor(Math.random()*(10 - getSize));
-				// Generate random Y-coordinate between 0 and 9;
-				let row = Math.floor(Math.random()*9);
-	  			// Increment the col to place Ship sideways;
-	  			for(let i = getSize; i > 0; i--) {
-					// Determine gameArray index corresponding to (col, row);
-					let index = convertCoordsToIndex(col, row);
-            		// If that space is available:
-  					if(gameArray[index] == 0) {
-  						// ...place the Ship;
-  						gameArray[index] = getSymbol;
-						// Update the column to place the ship;
-						col++;
-  					}
-          			// Recursive case:
-  					 else {
-            			placeShip();
-            			// Return to end this call in the callstack;
-            			return;
-            		}
-	  			}
-	  	    }
-		    // Base case: exit function, having placed the ship in question;
-		    return;
-	}
-
-	// The following instantiates the Ship objects representing each vessel;
-	// The isOdd() function is being repurposed inside determineVertical()
-    // to determine whether the vessel is to be placed vertically or
-	// horizontally;
-	// isOdd(): vertical;
-	// !isOdd(): horizontal;
-
-	// Instantiate Ship objects;
-	var aircraftCarrier = new Ship(5, "aircraftCarrier", "2");
-	var battleship = new Ship(4, "battleship", "3");
-	var cruiser = new Ship(3, "cruiser", "4");
-	var submarine = new Ship(3, "submarine", "5");
-	var destroyer = new Ship(2, "destroyer", "6");
-
-
-    // Set up game initially;
-    initializeGameArray(gameArray);
-
-	// Place our Ships on the board;
-	aircraftCarrier.placeShip();
-	battleship.placeShip();
-	cruiser.placeShip();
-	submarine.placeShip();
-	destroyer.placeShip();
-
-    dispgameArray();
-    getUpdateDisplay();  
-    dispgameArray();
-    dispBoard();
-    guessX = getGuessX();
-	guessY = getGuessY();
-    updateGameArray(guessX, guessY);
-    dispgameArray();
-
-for(let i = 0; i < 10; i++) {
-    document.getElementById("part1").innerHTML = "XX XX XX XX XX" + "<br />";
-
-}
-document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" + "<br />";
-
-}
-
+        alert(html);
+        document.getElementById("part1").innerHTML = html;
+        document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
+        if (countTries > 8) {
+           document.getElementById("part6").innerHTML = "The ships ESCAPED!"
+        }
+        else if(shipsSunk == 5) {
+          document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. "
+        }
+        // if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
+    }
 </script>
-
-<!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="/__/firebase/7.8.1/firebase-app.js"></script>
-
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="/__/firebase/7.8.1/firebase-analytics.js"></script>
-
-<!-- Initialize Firebase -->
-<script src="/__/firebase/init.js"></script>
 
 </body>
 </html>
