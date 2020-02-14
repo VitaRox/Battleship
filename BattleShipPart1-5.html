@@ -17,40 +17,39 @@
 <script type="text/javascript">
 
 	// Create empty array to represent game logic;
-    var gameArray = [];
+  const gameArray = [];
 
-	// These codes (or "symbols") represent state of cell in gameArray;
-    var empty = 0;
-    var hit = 1;
-    var miss = -1;
+  // These codes (or "symbols") represent state of cell in gameArray;
+  var empty = 0;
+  var hit = 1;
+  var miss = -1;
 
 	// Our counters/accumulators:
 	// Initialize global counters;
-    var countTries = 0;
-    var countMisses = 0;
-    var countHits = 0;
+  var countTries = 0;
+  var countMisses = 0;
+  var countHits = 0;
 	var shipsSunk = 0;
-	var placement;
 
 	// Set up game initially;
-    initializeGameArray(gameArray);
+  initializeGameArray(gameArray);
 	dispgameArray();
 	// place ships here
 	// The following instantiates the Ship objects representing each vessel;
 	// The isOdd() function is being repurposed inside determineVertical()
-    // to determine whether the vessel is to be placed vertically or
+  // to determine whether the vessel is to be placed vertically or
 	// horizontally;
 	// isOdd(): vertical;
 	// !isOdd(): horizontal;
 
 	// Instantiate Ship objects;
-	var aircraftCarrier = new Ship(5, "aircraftCarrier", 2);
-	var battleship = new Ship(4, "battleship", 3);
-	var cruiser = new Ship(3, "cruiser", 4);
-	var submarine = new Ship(3, "submarine", 5);
-	var destroyer = new Ship(2, "destroyer", 6);
+  const aircraftCarrier = new Ship(5, "aircraftCarrier", 2);
+  const battleship = new Ship(4, "battleship", 3);
+  const cruiser = new Ship(3, "cruiser", 4);
+  const submarine = new Ship(3, "submarine", 5);
+  const destroyer = new Ship(2, "destroyer", 6);
 
-    dispgameArray();
+  dispgameArray();
 	dispBoard();
 
 // for(let i = 0; i < 10; i++) {
@@ -73,17 +72,12 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 	// Generate a random number arbitrarily between 1 and 20;
 	function genRandNum() {
-		let randNum = Math.ceil(Math.random() * 20);
-		return randNum;
+		return Math.ceil(Math.random() * 20);
 	}
 
 	// Use to determine whether a Ship is vertical or horizontally placed;
     function isOdd(num) {
-	    if (num % 2 === 0) {
-			return false;
-        } else {
-       		return true;
-        }
+	    return num % 2 !== 0;
     }
 	// this is the display of the Model, the array tracking hits and misses
 	// and ship position;
@@ -97,13 +91,13 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
 
         // This controls the display of the game;
-        for (col= 0; col < 10; col++) {
-           for(row = 0; row < 10; row++) {
+        for (let col= 0; col < 10; col++) {
+           for(let row = 0; row < 10; row++) {
 	            // Internally convert coords to index here:
 	            let index = convertCoordsToIndex(col, row);
 
 	            // Display empty Cells;
-	            if (gameArray[index] == 0) {
+	            if (gameArray[index] === 0) {
 	                if (isOdd(index)) {
 	                    html = html + "X";
 	                } else {
@@ -111,49 +105,49 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	                }
 	            }
 	            // Check if contains empty when fired upon;
-	            if (gameArray[index] == -1){
+	            if (gameArray[index] === -1){
 	                if (isOdd(index)) {
 	                    html = html + miss;
 	                } else {
 	                    html = html + miss + "  ";
 	                }
 	            }
-	            if (gameArray[index] == 2) {
+	            if (gameArray[index] === 2) {
 	                if (isOdd(index)) {
 	                    html = html + aircraftCarrier.symbol;
 	                } else {
 	                  html = html + aircraftCarrier.symbol + "  ";
 	                }
 	            }
-	            if (gameArray[index] == 3) {
+	            if (gameArray[index] === 3) {
 	                if (isOdd(index)) {
 	                    html = html + battleship.symbol;
 	                } else {
 	                    html = html + battleship.symbol + "  ";
 	                }
 	            }
-	            if (gameArray[index] == 4) {
+	            if (gameArray[index] === 4) {
 	                if (isOdd(index)) {
 	                    html = html + cruiser.symbol;
 	                } else {
 	                    html = html + cruiser.symbol + "  ";
 	                }
 	            }
-	            if (gameArray[index] == 5) {
+	            if (gameArray[index] === 5) {
 	                if (isOdd(index)) {
 	                    html = html + submarine.symbol;
 	                } else {
 	                    html = html + submarine.symbol + "  ";
 	                }
 	            }
-	            if (gameArray[index] == 6) {
+	            if (gameArray[index] === 6) {
 	                if (isOdd(index)) {
 	                    html = html + destroyer.symbol;
 	                } else {
 	                    html = html + destroyer.symbol + "  ";
 	                }
 	            }
-	            if (gameArray[index] == 1) {
+	            if (gameArray[index] === 1) {
 	                if (isOdd(index)) {
 	                  html = html + hit;
 	                } else {
@@ -162,7 +156,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 	            }
 				// if at end: insert line break;
-				if (row == 9) {
+				if (row === 9) {
 					html += "<br>";
 				}
         	}
@@ -180,7 +174,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	// (col, row) value;
 	// Use for placing Ships;
 	// Test: passed, returns expected values;
-  	// Ironic: I may ultimately not need this at all.
+  // Ironic: I may ultimately not need this at all.
 	function convertIndexToCoords(index) {
 		// Initialize (col, row) to dummy values;
 		let col = -1;
@@ -194,7 +188,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 		} else {
 			// Convert index to a string;
       		// Had to change 'let' to 'var' to allow access outside of else{};
-			var tempDex = index.toString();
+			let tempDex = index.toString();
 			// Break said string into 2 components and convert to
 			// base-10 Numbers;
       		// Grab second digit: this will be col (y-value);
@@ -216,6 +210,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	// Tested and working;
 	function convertCoordsToIndex(col, row) {
 		let strDex = row.toString().concat(col.toString());
+		// 'Index' added for code clarity;
 		let index = parseInt(strDex, 10);
 		return index;
 	}
@@ -245,22 +240,22 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 		// hitPoints initially equal to the number of spaces the Ship
 		// occupies.
-		var hitPoints = size;
+		let hitPoints = size;
 
     	// hitPoints tracks which individual vessels have been sunk;
-		if(hitPoints == 0) {
+		if(hitPoints === 0) {
 			shipsSunk++;
       		alert(`The ${this.name} has been sunk!`);
 		}
 
 		// If isOdd() returns true, isVertical == true;
-		var isVertical = determineVertical();
+		let isVertical = determineVertical();
 
 		// A recursive function to determine if
 	    // Ship can be placed at the corresponding element in gameArray;
 		// Pass in the Ship it is checking for to place;
 	    // This function also places the ships within the gameArray;
-      const placement = function placeShip() {
+      this.placement = function placeShip() {
 
           // If Ship is vertical:
           if (isVertical) {
@@ -281,7 +276,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
               for (let i = this.size; i > 0; i--) {
 
                   // If the space is unoccupied:
-                  if (gameArray[j] == 0 && canPlace) {
+                  if (gameArray[j] === 0 && canPlace) {
                       // Continue inspecting potential spots, increment row;
                       j = convertCoordsToIndex(col, row++);
                       // Else: stop looking here, try again;
@@ -296,7 +291,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
               if (canPlace) {
                   for (let i = size; i > 0; i--) {
                       j = convertCoordsToIndex(col, originRow);
-                      gameArray[j] = symbol;
+                      gameArray[j] = this.symbol;
                       originRow++;
                   }
               }
@@ -316,7 +311,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
               // Increment the col to place Ship sideways;
               for (let i = this.size; i > 0; i--) {
                   // If that space is available:
-                  if (gameArray[j] == 0 && canPlace) {
+                  if (gameArray[j] === 0 && canPlace) {
                       // Continue inspecting potential spots, increment row;
                       j = convertCoordsToIndex(col++, row);
                       // Recursive case:
@@ -330,7 +325,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
               if (canPlace) {
                   for (let i = this.size; i > 0; i--) {
                       j = convertCoordsToIndex(originCol, row);
-                      gameArray[j] = symbol;
+                      gameArray[j] = this.symbol;
                       originCol++;
                   }
               }
@@ -341,11 +336,11 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
   }
 
 	// Place our ships within the array;
-	aircraftCarrier.placement;
-	battleship.placement;
-	cruiser.placement;
-	submarine.placement;
-	destroyer.placement;
+  aircraftCarrier.placement();
+	battleship.placement();
+	cruiser.placement();
+	submarine.placement();
+	destroyer.placement();
 
 	// get user's X-coordinate guess;
     function getGuessX() {
