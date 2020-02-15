@@ -90,7 +90,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	    // have occurred;
         alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
 
-        // This controls the display of the game;
+        // This controls the display of the gameArray;
         for (let col= 0; col < 10; col++) {
            for(let row = 0; row < 10; row++) {
 	            // Internally convert coords to index here:
@@ -155,13 +155,13 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	                }
 
 	            }
-				// if at end: insert line break;
-				if (row === 9) {
-					html += "<br>";
-				}
-        	}
+                // if at end: insert line break;
+                if (row === 9) {
+                  html += "<br>";
+                }
+           }
 			document.getElementById("part3").innerHTML = html;
-        }
+    }
 	}
 
 	// generates a random number between 1 and 20;
@@ -240,10 +240,10 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
 		// hitPoints initially equal to the number of spaces the Ship
 		// occupies.
-		let hitPoints = size;
+		this.hitPoints = size;
 
     	// hitPoints tracks which individual vessels have been sunk;
-		if(hitPoints === 0) {
+		if(this.hitPoints === 0) {
 			shipsSunk++;
       		alert(`The ${this.name} has been sunk!`);
 		}
@@ -342,6 +342,9 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	submarine.placement();
 	destroyer.placement();
 
+  dispgameArray();
+  dispBoard();
+
 	// get user's X-coordinate guess;
     function getGuessX() {
         alert("getGuessX");
@@ -382,31 +385,31 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     function updateGameArray(guessX, guessY) {
         alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
         let index = convertCoordsToIndex(guessX, guessY);
-		alert("index: " + index);
-		// If: empty count as a miss;
+        alert("index: " + index);
+        // If: empty count as a miss;
         if (gameArray[index] == empty) {
 	        // Place 'miss' Ship object here to reflect a miss;
 	        gameArray[index] = miss;
-			countMisses++;
-		// else if: a miss, mark as a miss again;
-		} else if(gameArray[index] == miss) {
-			gameArray[index] = miss;
-		// else if: a hit, mark as a hit again;
-		} else if (gameArray[index] == hit) {
-			gameArray[index] = hit;
-		// Else: a Ship:
-	    } else {
-			if(gameArray[index] == 2) {
-		        aircraftCarrier.hitPoints--;
-			} else if(gameArray[index] == 3) {
-				battleship.hitPoints--;
-			} else if(gameArray[index] == 4) {
-				cruiser.hitPoints--;
-			} else if(gameArray[index] == 5){
-				submarine.hitPoints--;
-			} else if(gameArray[index] == 6) {
-				destroyer.hitPoints--;
-			}
+			    countMisses++;
+        // else if: a miss, mark as a miss again;
+        } else if(gameArray[index] == miss) {
+          gameArray[index] = miss;
+        // else if: a hit, mark as a hit again;
+        } else if (gameArray[index] == hit) {
+          gameArray[index] = hit;
+        // Else: a Ship:
+          } else {
+          if(gameArray[index] == 2) {
+                aircraftCarrier.hitPoints--;
+          } else if(gameArray[index] == 3) {
+            battleship.hitPoints--;
+          } else if(gameArray[index] == 4) {
+            cruiser.hitPoints--;
+          } else if(gameArray[index] == 5){
+            submarine.hitPoints--;
+          } else if(gameArray[index] == 6) {
+            destroyer.hitPoints--;
+          }
 			// ...mark as hit;
 			gameArray[index] = hit;
 			// Increment total hits made;
@@ -416,12 +419,12 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 		countTries++;
     }
 
-	// Get and validate user input;
+	  // Get and validate user input;
     // Update the view;
     function getUpdateDisplay() {
 
         // Get user input;
-        var guessX = getGuessX();
+      var guessX = getGuessX();
 	    var guessY = getGuessY();
 
 	    updateGameArray(guessX, guessY);
@@ -436,52 +439,52 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         for (col = 0; col < 10; col++) {
             for (row = 0; row < 10; row++) {
 	            let index = convertCoordsToIndex(col, row);
-				// If: empty;
-				// Handle case in which must begin new row;
-				if(gameArray[index] == empty && (col == 9)) {
-	                if (isOdd(index)){
-	                    html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>" + "<br>";
-	                } else {
-						html += "<img src='water.png' alt='1' height='25' width='25'>" + "<br> ";
-					}
+            // If: empty;
+            // Handle case in which must begin new row;
+            if(gameArray[index] == empty && (col == 9)) {
+                      if (isOdd(index)){
+                          html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>" + "<br>";
+                      } else {
+                          html += "<img src='water.png' alt='1' height='25' width='25'>" + "<br> ";
+              }
 
-	            } else if (gameArray[index] == empty) {
-	                if (isOdd(index)){
-	                    html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>";
-	                } else {
-						html += "<img src='water.png' alt='1' height='25' width='25'> "
-					}
+            } else if (gameArray[index] == empty) {
+                      if (isOdd(index)){
+                          html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>";
+                      } else {
+                          html += "<img src='water.png' alt='1' height='25' width='25'> "
+                      }
 
-	            // Start printing on new line when at last column place;
-				} else if (gameArray[index] == miss && (col == 9)) {
-	                if (isOdd(index)){
-	                    html += "<img src='miss.png' alt='1' height='25' width='25'>" + "<br> ";
-	                } else {
-						html = html + "<img src='miss.png' alt='1' height='25' width='25'>" + "<br> "}
-				// If contains a miss;
-	        	} else if (gameArray[index] == miss) {
-	                if (isOdd(index)){
-	                    html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
-	                }
-	                else
-	                {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
-	            // Case in which must move to next line;
-			    } else if(gameArray[index] == hit && (col == 9)) {
-	                if (isOdd(index)){
-	                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>"
-	                }
-	                else
-	                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>" }
-	            // If: is a hit when guessed;
-				} else if(gameArray[index] == hit) {
-	                if (isOdd(index)){
-	                    html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
-	                }
-	                else
-	                {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
-	            }
-        	}
-    	}
+                  // Start printing on new line when at last column place;
+            } else if (gameArray[index] == miss && (col == 9)) {
+                      if (isOdd(index)){
+                          html += "<img src='miss.png' alt='1' height='25' width='25'>" + "<br> ";
+                      } else {
+                          html = html + "<img src='miss.png' alt='1' height='25' width='25'>" + "<br> "}
+            // If contains a miss;
+            } else if (gameArray[index] == miss) {
+                      if (isOdd(index)){
+                          html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
+                      }
+                      else
+                      {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
+                  // Case in which must move to next line;
+              } else if(gameArray[index] == hit && (col == 9)) {
+                      if (isOdd(index)){
+                          html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>"
+                      }
+                      else
+                      {html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>" }
+                      // If: is a hit when guessed;
+            } else if(gameArray[index] == hit) {
+                      if (isOdd(index)){
+                          html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
+                      }
+                      else
+                      {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+            }
+            }
+    	  }
         alert(html);
         document.getElementById("part1").innerHTML = html;
         document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
