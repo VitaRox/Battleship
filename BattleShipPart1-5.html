@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
+    <style>
 
+    </style>
     </head>
 <body>
 
 <h1>Battleship Game</h1>
     <p id="part1">Part 1</p>
     <p id="part2"></p>
-    <p id="part3" ></p>
+<tr style="text-align:justify-all">
+    <p id="part3" align="justify-all" ></p>
+</tr>
     <p id="part4"><button type="button" onclick="getUpdateDisplay()">GUESS</button></p>
     <p id="part5">Status</p>
     <p id="part6"></p>
@@ -33,8 +37,7 @@
 
 	// Set up game initially;
   initializeGameArray(gameArray);
-	dispgameArray();
-	// place ships here
+
 	// The following instantiates the Ship objects representing each vessel;
 	// The isOdd() function is being repurposed inside determineVertical()
   // to determine whether the vessel is to be placed vertically or
@@ -84,85 +87,43 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     function dispgameArray() {
 
         // var i = 0; commented out as unnecessary;
-        var html = "";
+        var html = "<ul>";
 
-	    // Creates the visual array tracking ship positions and where hits/misses
-	    // have occurred;
+	      // Creates the visual array tracking ship positions and where hits/misses
+	      // have occurred;
         alert((100 - countTries) + " unchecked spaces remaining in gameArray.");
 
         // This controls the display of the gameArray;
-        for (let col= 0; col < 10; col++) {
-           for(let row = 0; row < 10; row++) {
+        for (let row= 0; row < 10; row++) {
+           for(let col = 0; col < 10; col++) {
 	            // Internally convert coords to index here:
 	            let index = convertCoordsToIndex(col, row);
-
 	            // Display empty Cells;
 	            if (gameArray[index] === 0) {
-	                if (isOdd(index)) {
-	                    html = html + "X";
-	                } else {
-	                    html = html + "X ";
-	                }
+                  html += 'X ';
+              // Check if contains Ship when fired upon;
+              } else if (gameArray[index] === -1){
+	                html += miss + ' ';
+	            } else if (gameArray[index] ===  2) {
+                  html += aircraftCarrier.symbol + ' ';
+              } else if (gameArray[index] ===  3) {
+	                html += battleship.symbol + ' ';
+	            } else if (gameArray[index] ===  4) {
+                  html += cruiser.symbol + ' ';
+	            } else if (gameArray[index] ===  5) {
+                  html += submarine.symbol + ' ';
+	            } else if (gameArray[index] ===  6) {
+                  html += destroyer.symbol + ' ';
+	            } else if (gameArray[index] ===  1) {
+                  html += hit + ' ';
 	            }
-	            // Check if contains empty when fired upon;
-	            if (gameArray[index] === -1){
-	                if (isOdd(index)) {
-	                    html = html + miss;
-	                } else {
-	                    html = html + miss + "  ";
-	                }
-	            }
-	            if (gameArray[index] === 2) {
-	                if (isOdd(index)) {
-	                    html = html + aircraftCarrier.symbol;
-	                } else {
-	                  html = html + aircraftCarrier.symbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] === 3) {
-	                if (isOdd(index)) {
-	                    html = html + battleship.symbol;
-	                } else {
-	                    html = html + battleship.symbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] === 4) {
-	                if (isOdd(index)) {
-	                    html = html + cruiser.symbol;
-	                } else {
-	                    html = html + cruiser.symbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] === 5) {
-	                if (isOdd(index)) {
-	                    html = html + submarine.symbol;
-	                } else {
-	                    html = html + submarine.symbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] === 6) {
-	                if (isOdd(index)) {
-	                    html = html + destroyer.symbol;
-	                } else {
-	                    html = html + destroyer.symbol + "  ";
-	                }
-	            }
-	            if (gameArray[index] === 1) {
-	                if (isOdd(index)) {
-	                  html = html + hit;
-	                } else {
-	                  html = html + hit + "  ";
-	                }
-
-	            }
-                // if at end: insert line break;
-                if (row === 9) {
-                  html += "<br>";
-                }
+	            if(col == 9) {
+	                html += "<br>";
+              }
            }
-			document.getElementById("part3").innerHTML = html;
-    }
-	}
+			  document.getElementById("part3").innerHTML = html + "</ui>";
+        }
+	  }
 
 	// generates a random number between 1 and 20;
 	// if number isOdd(), isVertical == true;
@@ -291,6 +252,8 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
               if (canPlace) {
                   for (let i = size; i > 0; i--) {
                       j = convertCoordsToIndex(col, originRow);
+                      // alert("placing" + this.name + " at index " + j);
+                      // alert("index = (" + col + ", " + originRow + ")");
                       gameArray[j] = this.symbol;
                       originRow++;
                   }
@@ -400,7 +363,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         // Else: a Ship:
           } else {
           if(gameArray[index] == 2) {
-                aircraftCarrier.hitPoints--;
+            aircraftCarrier.hitPoints--;
           } else if(gameArray[index] == 3) {
             battleship.hitPoints--;
           } else if(gameArray[index] == 4) {
@@ -410,11 +373,11 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
           } else if(gameArray[index] == 6) {
             destroyer.hitPoints--;
           }
-			// ...mark as hit;
-			gameArray[index] = hit;
-			// Increment total hits made;
-			countHits++;
-		}
+          // ...mark as hit;
+          gameArray[index] = hit;
+          // Increment total hits made;
+          countHits++;
+		    }
 		// Update the model and view, update global counters;
 		countTries++;
     }
@@ -436,8 +399,8 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     function dispBoard() {
         var html = "";
         alert("disp Board");
-        for (col = 0; col < 10; col++) {
-            for (row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+            for (let row = 0; row < 10; row++) {
 	            let index = convertCoordsToIndex(col, row);
             // If: empty;
             // Handle case in which must begin new row;
@@ -487,6 +450,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     	  }
         alert(html);
         document.getElementById("part1").innerHTML = html;
+        document.getElementById("part2").innerHTML;
         document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
         if (countTries > 8) {
            document.getElementById("part6").innerHTML = "The ships ESCAPED!"
