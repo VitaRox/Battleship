@@ -6,13 +6,15 @@
     </style>
     </head>
 <body>
-
 <h1>Battleship Game</h1>
-    <p id="part1">Part 1</p>
+    <table><p id="part1">Part 1</p></table>
+
     <p id="part2"></p>
-<tr style="text-align:justify-all">
-    <p id="part3" align="justify-all" ></p>
-</tr>
+<table>
+    <td  text-display="auto" display="block">
+        <p id="part3"></p>
+    </td>
+</table>
     <p id="part4"><button type="button" onclick="getUpdateDisplay()">GUESS</button></p>
     <p id="part5">Status</p>
     <p id="part6"></p>
@@ -51,18 +53,16 @@
   const cruiser = new Ship(3, "cruiser", 4);
   const submarine = new Ship(3, "submarine", 5);
   const destroyer = new Ship(2, "destroyer", 6);
+  const dingy = new Ship(1, "dingy", 7);
 
-  dispgameArray();
-	dispBoard();
+  // dispgameArray();
+	// dispBoard();
 
-// for(let i = 0; i < 10; i++) {
-//     document.getElementById("part1").innerHTML = "XX XX XX XX XX<br />";
-//
-// }
+
 document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" ;
 
-	// A function to initialize each of the Model's elements to 0,
-	// representing an empty and unguessed element state;
+	  // A function to initialize each of the Model's elements to 0,
+	  // representing an empty and unguessed element state;
     function initializeGameArray(gameArray) {
 	    alert("initializeGameArray");
 	    for(let i = 0; i < 100; i++) {
@@ -87,7 +87,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     function dispgameArray() {
 
         // var i = 0; commented out as unnecessary;
-        var html = "<ul>";
+        let html = "";
 
 	      // Creates the visual array tracking ship positions and where hits/misses
 	      // have occurred;
@@ -121,7 +121,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	                html += "<br>";
               }
            }
-			  document.getElementById("part3").innerHTML = html + "</ui>";
+			  document.getElementById("part3").innerHTML = html;
         }
 	  }
 
@@ -304,6 +304,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	cruiser.placement();
 	submarine.placement();
 	destroyer.placement();
+	dingy.placement();
 
   dispgameArray();
   dispBoard();
@@ -397,25 +398,22 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 
   	// the pretty pictures (updates the View);
     function dispBoard() {
-        var html = "";
         alert("disp Board");
-        for (let col = 0; col < 10; col++) {
-            for (let row = 0; row < 10; row++) {
+        let html = "<tr>";
+        for (let row = 0; row < 10; row++) {
+            for (let col = 0; col < 10; col++) {
 	            let index = convertCoordsToIndex(col, row);
             // If: empty;
+            // if(col == 0) {
+            //     html += "<td>";
+            // }
             // Handle case in which must begin new row;
-            if(gameArray[index] == empty && (col == 9)) {
-                      if (isOdd(index)){
-                          html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>" + "<br>";
-                      } else {
-                          html += "<img src='water.png' alt='1' height='25' width='25'>" + "<br> ";
-              }
+            if(gameArray[index] == empty) {
+                          html += "<td><a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a></td>";
 
             } else if (gameArray[index] == empty) {
-                      if (isOdd(index)){
+                      if (isOdd(index))
                           html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>";
-                      } else {
-                          html += "<img src='water.png' alt='1' height='25' width='25'> "
                       }
 
                   // Start printing on new line when at last column place;
@@ -446,17 +444,22 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
                       else
                       {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
             }
+            // if(col == 9) {
+            //     html += "</tr>";
+            // }
             }
+            // After all rows complete, close tag defining the rows of the HTML table;
+            html += "</tr>";
     	  }
         alert(html);
         document.getElementById("part1").innerHTML = html;
         document.getElementById("part2").innerHTML;
         document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
         if (countTries > 8) {
-           document.getElementById("part6").innerHTML = "The ships ESCAPED!"
+           document.getElementById("part6").innerHTML = "The ships ESCAPED!";
         }
         else if(shipsSunk == 5) {
-          document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. "
+          document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. ";
         }
         // if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
     }
