@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-    <style>
-
-    </style>
+        <link rel="stylesheet" href="styles.css">
     </head>
 <body>
 <h1>Battleship Game</h1>
-    <table><p id="part1">Part 1</p></table>
-
+    <div class id="part1">Part 1</div>
     <p id="part2"></p>
-<table>
-    <td  text-display="auto" display="block">
-        <p id="part3"></p>
-    </td>
-</table>
+    <table id="part3">
+        <td  text-display="auto" display="block">
+        </td>
+    </table>
     <p id="part4"><button type="button" onclick="getUpdateDisplay()">GUESS</button></p>
     <p id="part5">Status</p>
     <p id="part6"></p>
@@ -399,57 +395,22 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
   	// the pretty pictures (updates the View);
     function dispBoard() {
         alert("disp Board");
-        let html = "<tr>";
+        let html;
         for (let row = 0; row < 10; row++) {
-            for (let col = 0; col < 10; col++) {
-	            let index = convertCoordsToIndex(col, row);
-            // If: empty;
-            // if(col == 0) {
-            //     html += "<td>";
-            // }
-            // Handle case in which must begin new row;
-            if(gameArray[index] == empty) {
-                          html += "<td><a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a></td>";
-
-            } else if (gameArray[index] == empty) {
-                      if (isOdd(index))
-                          html += "<a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a>";
-                      }
-
-                  // Start printing on new line when at last column place;
-            } else if (gameArray[index] == miss && (col == 9)) {
-                      if (isOdd(index)){
-                          html += "<img src='miss.png' alt='1' height='25' width='25'>" + "<br> ";
-                      } else {
-                          html = html + "<img src='miss.png' alt='1' height='25' width='25'>" + "<br> "}
-            // If contains a miss;
-            } else if (gameArray[index] == miss) {
-                      if (isOdd(index)){
-                          html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "
-                      }
-                      else
-                      {html = html + "<img src='miss.png' alt='1' height='25' width='25'>  "}
-                  // Case in which must move to next line;
-              } else if(gameArray[index] == hit && (col == 9)) {
-                      if (isOdd(index)){
-                          html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>"
-                      }
-                      else
-                      {html = html + "<img src='hit.png' alt='1' height='25' width='25'>" + "<br>" }
-                      // If: is a hit when guessed;
-            } else if(gameArray[index] == hit) {
-                      if (isOdd(index)){
-                          html = html + "<img src='hit.png' alt='1' height='25' width='25'>"
-                      }
-                      else
-                      {html = html + "<img src='hit.png' alt='1' height='25' width='25'>  "}
+            html = "<tr>";
+            for(let col = 0; col < 10; col++) {
+                let index = convertCoordsToIndex(col, row);
+                if (gameArray[index] === empty) {
+                    // Add newline char to create new line of HTML;
+                    html += "<td><a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a></td>\n";
+                } else if (gameArray[index] === miss) {
+                    html += "<td><img src='miss.png' alt='1' height='25' width='25'></td>\n";
+                } else if (gameArray[index] === hit) {
+                    html = html + "<td><img src='hit.png' alt='1' height='25' width='25'></td>\n";
+                }
             }
-            // if(col == 9) {
-            //     html += "</tr>";
-            // }
-            }
-            // After all rows complete, close tag defining the rows of the HTML table;
-            html += "</tr>";
+            // After each row complete, close tag defining that row of the HTML table;
+            html += "</tr>\n";
     	  }
         alert(html);
         document.getElementById("part1").innerHTML = html;
