@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="styles.css">
+<!--        <link rel="stylesheet" href="styles.css">-->
+        <style>
+            #part1 {
+                display:grid;
+            }
+            .row {
+                grid-column-start: 1;
+                grid-column-end: 10;
+                grid-row-start:1;
+                grid-row-end: 10;
+            }
+            .grid-item {
+                display:inline-grid;
+            }
+        </style>
     </head>
 <body>
 <h1>Battleship Game</h1>
-    <div class id="part1">Part 1</div>
+    <div id="part1">Part 1
+        <div class="row"></div>
+    </div>
     <p id="part2"></p>
     <table id="part3">
         <td  text-display="auto" display="block">
@@ -397,20 +413,17 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         alert("disp Board");
         let html;
         for (let row = 0; row < 10; row++) {
-            html = "<tr>";
+            html = "";
             for(let col = 0; col < 10; col++) {
                 let index = convertCoordsToIndex(col, row);
                 if (gameArray[index] === empty) {
-                    // Add newline char to create new line of HTML;
-                    html += "<td><a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a></td>\n";
+                    html += "<div class='grid-item'><a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a></div>";
                 } else if (gameArray[index] === miss) {
-                    html += "<td><img src='miss.png' alt='1' height='25' width='25'></td>\n";
+                    html += "<div class='grid-item'><a href=dispBoard()><img src='miss.png' alt='1' height='25' width='25'></a></div>";
                 } else if (gameArray[index] === hit) {
-                    html = html + "<td><img src='hit.png' alt='1' height='25' width='25'></td>\n";
+                    html += "<div class='grid-item'><a href=dispBoard()><img src='hit.png' alt='1' height='25' width='25'></a></div>";
                 }
             }
-            // After each row complete, close tag defining that row of the HTML table;
-            html += "</tr>\n";
     	  }
         alert(html);
         document.getElementById("part1").innerHTML = html;
