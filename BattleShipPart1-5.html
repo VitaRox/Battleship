@@ -17,22 +17,25 @@
             }
         </style>
     </head>
-<body>
-<h1>Battleship Game</h1>
-    <div id="part1">Part 1
-        <div class="row"></div>
-    </div>
-    <p id="part2"></p>
-    <table id="part3">
-        <td  text-display="auto" display="block">
-        </td>
+
+    <body>
+
+    <h1>Battleship Game</h1>
+
+    <table id="part1">Part 1
+        <tbody>
+
+        </tbody>
     </table>
+
+    <p id="part2"></p>
+    <p id="part3"></p>
     <p id="part4"><button type="button" onclick="getUpdateDisplay()">GUESS</button></p>
     <p id="part5">Status</p>
     <p id="part6"></p>
     <p id="part7"></p>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
 	// Create empty array to represent game logic;
   const gameArray = [];
@@ -65,11 +68,7 @@
   const cruiser = new Ship(3, "cruiser", 4);
   const submarine = new Ship(3, "submarine", 5);
   const destroyer = new Ship(2, "destroyer", 6);
-  const dingy = new Ship(1, "dingy", 7);
-
-  // dispgameArray();
-	// dispBoard();
-
+  // const dingy = new Ship(1, "dingy", 7);
 
 document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' height='100' width='100'>" ;
 
@@ -110,7 +109,7 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
            for(let col = 0; col < 10; col++) {
 	            // Internally convert coords to index here:
 	            let index = convertCoordsToIndex(col, row);
-	            // Display empty Cells;
+	            // If: empty or unguessed;
 	            if (gameArray[index] === 0) {
                   html += 'X ';
               // Check if contains Ship when fired upon;
@@ -305,8 +304,6 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
                   }
               }
           }
-          // Base case: exit function, having placed the ship in question;
-          // return;
       };
   }
 
@@ -316,8 +313,9 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	cruiser.placement();
 	submarine.placement();
 	destroyer.placement();
-	dingy.placement();
+	// dingy.placement();
 
+  // Show the initial game board and array before first guess;
   dispgameArray();
   dispBoard();
 
@@ -325,17 +323,12 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     function getGuessX() {
         alert("getGuessX");
         let guessIsBad = true;
+        let guessX;
         while (guessIsBad) {
-            var guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
-            // alert(guessX);
-            // alert(parseInt(guessX));
+            guessX =  window.prompt("Enter your guess", "Number from 0 to 9");
             if ((parseInt(guessX) >= 0 ) && (parseInt(guessX) <= 9)) {
               guessIsBad = false;
-              // The following line is unnecessary, as this will break
-              // out of while loop if (!guessIsBad) (i.e. if input is valid)
-              // return parseInt(guessX);
             }
-            alert("GuessX is bad? " + guessIsBad);
         }
         return parseInt(guessX);
     }
@@ -344,37 +337,37 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
 	  function getGuessY() {
        alert("getGuessY");
        let guessIsBad = true;
+       let guessY;
        while (guessIsBad) {
-           var guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
+           guessY =  window.prompt("Enter your guess", "Number from 0 to 9");
            if ((parseInt(guessY) >= 0 ) && (parseInt(guessY) <= 9)) {
               // Update guessIsBad to exit validation (while) loop;
               guessIsBad = false;
             }
-           alert("guessY is bad?" + guessIsBad);
         }
         return parseInt(guessY);
     }
 
-	// Update data;
+	  // Update data;
     // Will change data (symbol in gameArray), which will update the
     // appearance of the board;
     function updateGameArray(guessX, guessY) {
-        alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
         let index = convertCoordsToIndex(guessX, guessY);
+        alert("coordinates guessed:  (" + guessX + ", " + guessY + ")");
         alert("index: " + index);
         // If: empty count as a miss;
         if (gameArray[index] == empty) {
 	        // Place 'miss' Ship object here to reflect a miss;
 	        gameArray[index] = miss;
 			    countMisses++;
-        // else if: a miss, mark as a miss again;
+        // Else if: a miss, mark as a miss again;
         } else if(gameArray[index] == miss) {
           gameArray[index] = miss;
-        // else if: a hit, mark as a hit again;
+        // Else if: a hit, mark as a hit again;
         } else if (gameArray[index] == hit) {
           gameArray[index] = hit;
         // Else: a Ship:
-          } else {
+        } else {
           if(gameArray[index] == 2) {
             aircraftCarrier.hitPoints--;
           } else if(gameArray[index] == 3) {
@@ -400,33 +393,35 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
     function getUpdateDisplay() {
 
         // Get user input;
-      var guessX = getGuessX();
-	    var guessY = getGuessY();
+      let guessX = getGuessX();
+	    let guessY = getGuessY();
 
 	    updateGameArray(guessX, guessY);
 	    dispgameArray();
 	    dispBoard();
     }
 
+
   	// the pretty pictures (updates the View);
     function dispBoard() {
-        alert("disp Board");
-        let html;
-        for (let row = 0; row < 10; row++) {
-            html = "";
-            for(let col = 0; col < 10; col++) {
-                let index = convertCoordsToIndex(col, row);
-                if (gameArray[index] === empty) {
-                    html += "<div class='grid-item'><a href=dispBoard()><img src='water.png' alt='1' height='25' width='25'></a></div>";
-                } else if (gameArray[index] === miss) {
-                    html += "<div class='grid-item'><a href=dispBoard()><img src='miss.png' alt='1' height='25' width='25'></a></div>";
+        // let html;
+        let table = document.getElementById("part1");
+        table.innerHTML = "";
+        for (let r = 0; r < 10; r++) {
+            // html = "";
+            let row = table.insertRow(-1);
+            for(let c = 0; c < 10; c++) {
+                let index = convertCoordsToIndex(c, r);
+                let column = row.insertCell(-1);
+                if (gameArray[index] === miss) {
+                    column.innerHTML = "<div class='grid-item'><img src='miss.png' alt='1' height='25' width='25'></div>";
                 } else if (gameArray[index] === hit) {
-                    html += "<div class='grid-item'><a href=dispBoard()><img src='hit.png' alt='1' height='25' width='25'></a></div>";
+                    column.innerHTML = "<div class='grid-item'><img src='hit.png' alt='1' height='25' width='25'></div>";
+                } else {
+                    column.innerHTML = "<div class='grid-item'><img src='water.png' alt='1' height='25' width='25'></div>";
                 }
             }
     	  }
-        alert(html);
-        document.getElementById("part1").innerHTML = html;
         document.getElementById("part2").innerHTML;
         document.getElementById("part5").innerHTML = "Tries: " + countTries + "  Misses: " + countMisses + "  Hits:   " + countHits + "  Ships sunk:  " + shipsSunk;
         if (countTries > 8) {
@@ -435,7 +430,6 @@ document.getElementById("part2").innerHTML = "<img src='water.png' alt='1' heigh
         else if(shipsSunk == 5) {
           document.getElementById("part6").innerHTML = "You sank the fleet of your nemesis.  Congratulations on your victory. ";
         }
-        // if (countHits >= 3) { document.getElementById("part7").innerHTML = "You SUNK by Battleship!"}
     }
 
 </script>
